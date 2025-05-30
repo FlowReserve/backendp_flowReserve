@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Registro Médico</title>
+</head>
+<body>
+<h1>Formulario de Registro</h1>
+<form action="#" th:action="@{/medicos/crear}" th:object="${medicoDTO}" method="post">
+    <label>Nombre:</label>
+    <input type="text" th:field="*{nombre}" />
+    <br/>
+    <label>Email:</label>
+    <input type="email" th:field="*{email}" />
+    <br/>
+    <label>Password:</label>
+    <input type="password" th:field="*{contraseña}" />
+    <br/>
+    <label>ID Invitación:</label>
+    <input type="text" th:field="*{codigoInvitacion}" />
+    <br/>
+    <button type="submit">Registrar</button>
+</form>
+</body>
+</html>

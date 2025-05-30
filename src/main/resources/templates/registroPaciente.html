@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Registro de Paciente</title>
+</head>
+<body>
+
+<h1>Formulario de Registro de Paciente</h1>
+
+<!-- Mensaje de éxito -->
+<div th:if="${mensaje}" style="color: green;">
+    <p th:text="${mensaje}"></p>
+</div>
+
+<!-- Mensaje de error -->
+<div th:if="${error}" style="color: red;">
+    <p th:text="${error}"></p>
+</div>
+
+<form th:action="@{/pacientes/crear}" th:object="${pacienteDTO}" method="post">
+    <label for="nombrePaciente">Nombre del Paciente:</label>
+    <input type="text" id="nombrePaciente" th:field="*{nombrePaciente}" required />
+    <br/><br/>
+
+    <button type="submit">Registrar</button>
+</form>
+
+</body>
+</html>

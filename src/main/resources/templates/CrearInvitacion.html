@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Crear Invitación</title>
+</head>
+<body>
+<h1>Crear Invitación</h1>
+
+<form th:action="@{/invitaciones/crear}" th:object="${invitacionDTO}" method="post">
+
+  <label for="codigo">Código:</label>
+  <input type="text" id="codigo" th:field="*{codigo}" readonly /><br/><br/>
+
+  <label for="hospitalId">ID del Hospital:</label>
+  <input type="number" id="hospitalId" th:field="*{hospitalId}" required /><br/><br/>
+
+  <button type="submit">Crear Invitación</button>
+</form>
+
+<div th:if="${mensaje != null}">
+  <p th:text="${mensaje}" style="color: green;"></p>
+</div>
+
+<div th:if="${error != null}">
+  <p style="color: red;" th:text="${error}"></p>
+</div>
+
+</body>
+</html>

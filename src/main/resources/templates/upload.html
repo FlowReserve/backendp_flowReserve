@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Subir archivo ZIP</title>
+</head>
+<body>
+<h1>Subir archivo ZIP</h1>
+
+<form th:action="@{/requests}" method="post" enctype="multipart/form-data">
+  <label for="archivoZip">Selecciona archivo ZIP:</label>
+  <input type="file" id="archivoZip" name="archivoZip" accept=".zip" required />
+  <br><br>
+
+  <label for="pressureA">Presión A:</label>
+  <input type="number" id="pressureA" name="pressureA"  />
+  <br><br>
+
+  <label for="pressureB">Presión B:</label>
+  <input type="number" id="pressureB" name="pressureB"  />
+  <br><br>
+
+  <label for="pressureB">Presión B:</label>
+  <input type="number" id="estado" name="estado"  />
+  <br><br>
+  <button type="submit">Subir</button>
+</form>
+</body>
+</html>

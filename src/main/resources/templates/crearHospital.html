@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Crear Hospital</title>
+</head>
+<body>
+<h1>Crear Hospital</h1>
+
+<form th:action="@{/hospital/nuevo}" th:object="${hospital}" method="post">
+
+  <!-- id no se muestra porque es autogenerado -->
+
+  <label>Nombre:</label>
+  <input type="text" th:field="*{nombre}" required /><br/><br/>
+
+  <label>Código:</label>
+  <input type="number" th:field="*{codigo}" required /><br/><br/>
+
+  <button type="submit">Guardar</button>
+</form>
+
+<div th:if="${mensaje != null}">
+  <p th:text="${mensaje}" style="color:green;"></p>
+</div>
+</body>
+</html>

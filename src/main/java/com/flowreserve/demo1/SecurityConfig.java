@@ -25,8 +25,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
 
                         .requestMatchers(HttpMethod.POST, "/api/v1/login").permitAll()
-
-                        .requestMatchers("/hospital/**").permitAll()
+                        .requestMatchers("/api/v1/hospital/**").permitAll()
+                        .requestMatchers("/api/v1/invitaciones/**").permitAll()
+                        .requestMatchers("/api/v1/medicos/**").permitAll()
+                        .requestMatchers("/api/v1/pacientes/**").permitAll()
                         .anyRequest().authenticated()
                 )
 

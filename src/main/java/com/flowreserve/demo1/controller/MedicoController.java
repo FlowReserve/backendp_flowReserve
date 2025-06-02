@@ -5,6 +5,7 @@ import com.flowreserve.demo1.dto.MedicoDTO;
 import com.flowreserve.demo1.model.Hospital;
 import com.flowreserve.demo1.model.Invitacion;
 import com.flowreserve.demo1.model.Medico;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -30,22 +31,10 @@ public class MedicoController {
 
 
     @PostMapping
-    public ResponseEntity<?> crearMedico(@RequestBody MedicoDTO medicoDTO) {
-        try {
-                    Medico medicoCreado = medicoService.crearMedicoDesdeInvitacion(medicoDTO);
-            return ResponseEntity.status(HttpStatus.CREATED).body(medicoCreado);
-
-
-
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        }
-
-        catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error al crear el médico: " + e.getMessage());
-        }
-
+    public ResponseEntity<?> crearMedico(@Valid @RequestBody MedicoDTO medicoDTO) {
+        Medico medicoCreado = medicoService.crearMedicoDesdeInvitacion(medicoDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(medicoCreado);
+    }
     }
 
 
@@ -58,5 +47,5 @@ public class MedicoController {
 
 
 
-}
+
 

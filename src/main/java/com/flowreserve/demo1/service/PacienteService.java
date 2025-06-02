@@ -17,10 +17,11 @@ public class PacienteService {
     }
 
     public Paciente crearPaciente(PacienteDTO pacienteDTO) {
-
+//realizar jwt para probar sesiones con postman faltará medico con sesión iniciada
         Paciente paciente = new Paciente();
         paciente.setNombre(pacienteDTO.getNombrePaciente());
-
+         paciente.setApellido(pacienteDTO.getApellidoPaciente());
+         paciente.setNhc(pacienteDTO.getCodigoCNHC());
         paciente = pacienteRepository.save(paciente);
 
         return paciente;

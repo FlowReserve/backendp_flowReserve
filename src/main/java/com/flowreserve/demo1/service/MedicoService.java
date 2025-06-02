@@ -42,6 +42,7 @@ public Medico crearMedicoDesdeInvitacion(MedicoDTO medicoDTO) {
 
     Medico medico = new Medico();
     medico.setNombre(medicoDTO.getNombre());
+    medico.setApellido(medicoDTO.getApellido());
     medico.setEmail(medicoDTO.getEmail());
     medico.setPassword(passwordEncoder.encode(medicoDTO.getContraseña()));
 
@@ -67,16 +68,20 @@ return medico;
     }
 
     public boolean authenticate(String email, String rawPassword) {
-        Optional<Medico> medicoOpt = medicoRepository.findByEmail(email);
+        String emailNormalized = email.trim().toLowerCase();
+
+        Optional<Medico> medicoOpt = medicoRepository.findByEmail(emailNormalized);
         if (medicoOpt.isEmpty()) {
-            System.out.println("No se encontró médico con email: " + email);
+            System.out.println("No se encontró médico con email: " + emailNormalized);
             return false;
         }
 
         Medico medico = medicoOpt.get();
-        System.out.println("Medico encontrado: " + medico.getEmail());
-        System.out.println("Password raw: " + rawPassword);
-        System.out.println("Password almacenada: " + medico.getPassword());
+
+        if (medico.getPassword() == null) {
+            System.out.println("El medico no tiene contraseña almacenada.");
+            return false;
+        }
 
         boolean matches = passwordEncoder.matches(rawPassword, medico.getPassword());
         System.out.println("Resultado matches: " + matches);

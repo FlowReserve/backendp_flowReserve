@@ -1,8 +1,20 @@
 package com.flowreserve.demo1.dto;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+@JsonIgnoreProperties(value = {"codigo", "usada"}, allowGetters = true)
 
 public class InvitacionDTO {
+
+    @NotNull(message = "El id es obligatorio")
+
     private Long hospitalId;
+
+
+
+
     private String codigo;
+
     private boolean usada;
 
     public Long getHospitalId() {

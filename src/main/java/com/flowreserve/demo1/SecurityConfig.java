@@ -57,8 +57,8 @@ public class SecurityConfig {
     @Bean
     public CorsFilter corsFilter() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowCredentials(true); // ← Necesario si usas cookies (withCredentials)
-        config.setAllowedOrigins(Arrays.asList("http://localhost:5173")); // ← Tu frontend
+        config.setAllowCredentials(true); // permite el uso de cookies (withCredentials)
+        config.setAllowedOrigins(Arrays.asList("http://localhost:5173")); // dirección provisional del front-end
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With"));
         config.setExposedHeaders(Arrays.asList("Authorization")); // opcional

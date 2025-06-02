@@ -15,6 +15,14 @@ public class Paciente extends User{
         this.nhc = nhc;
     }
 
+    public Medico getMedico() {
+        return medico;
+    }
+
+    public void setMedico(Medico medico) {
+        this.medico = medico;
+    }
+
     @ManyToOne
     @JoinColumn(name = "medico_id")
     private Medico medico;

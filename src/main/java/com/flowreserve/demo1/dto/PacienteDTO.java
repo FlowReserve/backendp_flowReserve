@@ -1,18 +1,22 @@
 package com.flowreserve.demo1.dto;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 public class PacienteDTO {
 
+    @NotBlank(message = "El nombre es obligatorio")
     private String nombrePaciente;
 
+    @NotBlank(message = "El apellido es obligatorio")
     private String apellidoPaciente;
 
-    public String getApellidoPaciente() {
-        return apellidoPaciente;
-    }
+    @NotNull(message = "El código CNHC es obligatorio")
+    private String codigoCNHC;
 
-    public void setApellidoPaciente(String apellidoPaciente) {
-        this.apellidoPaciente = apellidoPaciente;
-    }
+
+    private Long codigoAsociadoAcnhc;
+
+    // Getters y setters
 
     public String getNombrePaciente() {
         return nombrePaciente;
@@ -22,23 +26,22 @@ public class PacienteDTO {
         this.nombrePaciente = nombrePaciente;
     }
 
-    public Long getCodigoCNHC() {
-        return CodigoCNHC;
+    public String getApellidoPaciente() {
+        return apellidoPaciente;
     }
 
-    public void setCodigoCNHC(Long codigoCNHC) {
-        CodigoCNHC = codigoCNHC;
+    public void setApellidoPaciente(String apellidoPaciente) {
+        this.apellidoPaciente = apellidoPaciente;
     }
 
-    public Long getCodigoAsociadoAcnhc() {
-        return CodigoAsociadoAcnhc;
+
+
+
+    public String getCodigoCNHC() {
+        return codigoCNHC;
     }
 
-    public void setCodigoAsociadoAcnhc(Long codigoAsociadoAcnhc) {
-        CodigoAsociadoAcnhc = codigoAsociadoAcnhc;
+    public void setCodigoCNHC(String codigoCNHC) {
+        this.codigoCNHC = codigoCNHC;
     }
-
-    private Long CodigoCNHC;
-
-     private Long CodigoAsociadoAcnhc;
 }

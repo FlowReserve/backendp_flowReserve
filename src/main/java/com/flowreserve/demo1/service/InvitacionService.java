@@ -1,5 +1,6 @@
 package com.flowreserve.demo1.service;
 
+import com.flowreserve.demo1.dto.InvitacionDTO;
 import com.flowreserve.demo1.model.Hospital;
 import com.flowreserve.demo1.model.Invitacion;
 import com.flowreserve.demo1.repository.HospitalRepository;
@@ -24,7 +25,12 @@ public class InvitacionService
 
     private static final int MAX_INTENTOS = 10;
     @Transactional
-    public Invitacion crearInvitacion(Hospital hospital) {
+    public InvitacionDTO crearInvitacion(Long hospitalId) {
+
+        Hospital hospital = hospitalRepository.findById(hospitalId)
+                .orElseThrow(() -> new RuntimeException("Hospital no encontrado"));
+
+
         Invitacion invitacion = new Invitacion();
         invitacion.setHospital(hospital);
         invitacion.setUsada(false);
@@ -32,7 +38,14 @@ public class InvitacionService
         // Generar código único
         String codigo = generarCodigoUnico();
         invitacion.setCodigo(codigo);
-        return invitacionRepository.save(invitacion);
+        invitacionRepository.save(invitacion);
+
+        InvitacionDTO dto = new InvitacionDTO();
+        dto.setHospitalId(hospital.getId());
+        dto.setCodigo(invitacion.getCodigo());
+        dto.setUsada(invitacion.isUsada());
+
+        return dto;
     }
     private String generarCodigoUnico() {
         for (int i = 0; i < MAX_INTENTOS; i++) {

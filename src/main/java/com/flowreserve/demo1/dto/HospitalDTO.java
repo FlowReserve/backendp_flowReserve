@@ -1,5 +1,8 @@
 package com.flowreserve.demo1.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 public class HospitalDTO {
 
     public String getNombreHospital() {
@@ -11,9 +14,11 @@ public class HospitalDTO {
     }
 
 
+    @NotBlank(message = "El nombre es obligatorio")
 
     private String nombreHospital;
 
+    @NotNull(message = "El código es obligatorio")
     private Long codigoHospital;
 
 

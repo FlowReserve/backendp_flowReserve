@@ -7,6 +7,7 @@ import com.flowreserve.demo1.model.Invitacion;
 import com.flowreserve.demo1.repository.HospitalRepository;
 import com.flowreserve.demo1.repository.InvitacionRepository;
 import com.flowreserve.demo1.service.InvitacionService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 
@@ -33,27 +34,8 @@ public class InvitacionController {
 
 
     @PostMapping
-    public ResponseEntity<?> crearInvitacion(@RequestBody InvitacionDTO invitacionDTO) {
-        try {
-            Hospital hospital = hospitalRepository.findById(invitacionDTO.getHospitalId())
-                    .orElseThrow(() -> new ResponseStatusException(
-                            HttpStatus.BAD_REQUEST, "Hospital no encontrado"));
-
-
-            Invitacion invitacion = invitacionService.crearInvitacion(hospital);
-
-            // Construir respuesta como DTO
-            InvitacionDTO respuestaDTO = new InvitacionDTO();
-            respuestaDTO.setHospitalId(hospital.getId());
-            respuestaDTO.setCodigo(invitacion.getCodigo());
-            respuestaDTO.setUsada(invitacion.isUsada());
-
-            return ResponseEntity.status(HttpStatus.CREATED).body(respuestaDTO);
-
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error al crear invitación: " + e.getMessage());
-        }
-
+    public ResponseEntity<?> crearInvitacion(@Valid @RequestBody InvitacionDTO invitacionDTO) {
+        InvitacionDTO respuesta = invitacionService.crearInvitacion(invitacionDTO.getHospitalId());
+        return ResponseEntity.status(HttpStatus.CREATED).body(respuesta);
     }
 }

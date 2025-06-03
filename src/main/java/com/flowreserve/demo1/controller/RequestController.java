@@ -1,11 +1,15 @@
 package com.flowreserve.demo1.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.flowreserve.demo1.dto.PacienteDTO;
 import com.flowreserve.demo1.dto.RequestDTO;
 import com.flowreserve.demo1.model.Medico;
 import com.flowreserve.demo1.model.Request;
 import com.flowreserve.demo1.repository.RequestRepository;
+import com.flowreserve.demo1.service.RequestService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -13,7 +17,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
-
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import com.flowreserve.demo1.service.MedicoService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,62 +34,63 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
+
 @RequestMapping("/requests")
 
 public class RequestController
+
+
 {
 
-    @Autowired
-    private RequestRepository requestRepository;
 
     @Autowired
-    private MedicoService medicoService;
-    private final String UPLOAD_DIR = "uploads/requests/";
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> crearRequestConArchivos(
-      //     @RequestPart("json") MultipartFile json,
-            @RequestPart("archivoZip") MultipartFile archivoZip) throws IOException {
+    private RequestService requestService;
+/*
+    // Mostrar el formulario
+    @GetMapping("/nuevo")
+    public String mostrarFormulario(Model model) {
+        model.addAttribute("requestDTO", new RequestDTO());
+        return "crearPeticion"; // Nombre del archivo HTML en templates/
+    }
 
-        // Parsear el JSON recibido a DTO
-      //      ObjectMapper mapper = new ObjectMapper();
-    //       RequestDTO dto = mapper.readValue(json.getBytes(), RequestDTO.class);
+    // Procesar el formulario
+    @PostMapping("/crear")
+    public String crearRequestConArchivos(
+            @ModelAttribute("requestDTO") RequestDTO dto,
+            @RequestParam("archivoZip") MultipartFile archivoZip,
+            Model model) {
 
-        // Crear entidad Request
-               Request request = new Request();
-
-
-
-
-        if (!archivoZip.isEmpty()) {
-            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            String nombreMedico = auth.getName(); // aquí puede ser el email
-
-            // Opcional: obtener el Medico si necesitas el nombre completo
-            Medico medico = medicoService.findByEmail(nombreMedico);
-            String nombreCarpeta = medico.getNombre().replaceAll("\\s+", "_"); // evita espacios
-
-            // Define la ruta base del ZIP
-            Path carpetaDestino = Paths.get("C:/Users/elias.pineiro/Desktop/zips", nombreCarpeta);
-            Files.createDirectories(carpetaDestino); // crea carpeta si no existe
-
-            String nombreArchivo = UUID.randomUUID() + "_" + archivoZip.getOriginalFilename();
-            Path rutaArchivo = carpetaDestino.resolve(nombreArchivo);
-            Files.write(rutaArchivo, archivoZip.getBytes());
-            request.setUser(medico);  // <--- aquí asocias el médico
-            request.setDate(LocalDateTime.now());  // o LocalDate si solo necesitas fecha
-            request.setState("PENDIENTE");
-            request.setNombreArchivoZip(nombreArchivo);
-        //          request.setPressureA(dto.getPressureA());
-      //            request.setPressureB(dto.getPressureB());
-
+        try {
+            String codigo = requestService.crearRequestConArchivos(dto, archivoZip);
+            model.addAttribute("mensaje", "Request creada con éxito. Código: " + codigo);
+        } catch (Exception e) {
+            model.addAttribute("error", "Error: " + e.getMessage());
         }
 
-        requestRepository.save(request);
-
-        return ResponseEntity.ok("Request con ZIP creada con éxito.");
+        return "crearPeticion"; // Muestra la misma vista con el resultado
     }
+
+*/
+
+
+
+    @PostMapping(value = "/crear", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> crearRequestConArchivos(
+            @RequestPart("json") RequestDTO requestDTO,
+            @RequestPart("archivoZip") MultipartFile archivoZip) {
+        try {
+            String codigo = requestService.crearRequestConArchivos(requestDTO, archivoZip);
+            return ResponseEntity.ok("Request creada con código: " + codigo);
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al crear la request: " + e.getMessage());
+        }
+    }
+
 
 }

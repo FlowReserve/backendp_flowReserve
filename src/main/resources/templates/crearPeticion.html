@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Crear Petición</title>
+
+</head>
+<body>
+
+<form th:action="@{/requests/crear}" method="post" enctype="multipart/form-data" th:object="${requestDTO}">
+
+    <label for="idPaciente">ID del Paciente:</label><br>
+    <input type="text" id="idPaciente" th:field="*{idPaciente}" /><br><br>
+    <input type="text" id="pa" th:field="*{pressureA}" />
+    <input type="text" id="pb" th:field="*{pressureB}" />
+    <textarea id="comentarios" th:field="*{comentarios}"></textarea>
+
+    <label for="archivoZip">Archivo ZIP:</label><br>
+    <input type="file" id="archivoZip" name="archivoZip" accept=".zip" required/><br><br>
+
+    <button type="submit">Enviar Petición</button>
+</form>
+
+</body>
+</html>
+

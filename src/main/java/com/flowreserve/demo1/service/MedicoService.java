@@ -44,7 +44,7 @@ public Medico crearMedicoDesdeInvitacion(MedicoDTO medicoDTO) {
     medico.setNombre(medicoDTO.getNombre());
     medico.setApellido(medicoDTO.getApellido());
     medico.setEmail(medicoDTO.getEmail());
-    medico.setPassword(passwordEncoder.encode(medicoDTO.getContraseña()));
+    medico.setPassword((medicoDTO.getContraseña()));
 
     //Role roleMedico = roleRepo.findByName("ROLE_MEDICO")
      //       .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
@@ -65,6 +65,11 @@ return medico;
     public Medico findByEmail(String email) {
         return medicoRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Médico no encontrado con email: " + email));
+    }
+
+    public Medico findById(Long id) {
+        return medicoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Médico no encontrado con id: " + id));
     }
 
     public boolean authenticate(String email, String rawPassword) {

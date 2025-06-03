@@ -9,13 +9,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 import java.util.Optional;
 
-@RestController
-@RequestMapping("/api/v1/")
+@Controller
+//@RequestMapping("/api/v1/")
+@RequestMapping("/acceso")
 
 public class LoginController {
 
@@ -25,7 +27,12 @@ public class LoginController {
         this.medicoService = medicoService;
     }
 
+    @GetMapping("/formulario")
+    public String mostrarFormularioLogin() {
+        return "accesoLogin"; // plantilla accesoLogin.html
+    }
 
+/*
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginDTO loginDTO) {
         boolean authenticated = medicoService.authenticate(loginDTO.getEmail(), loginDTO.getPassword());
@@ -37,7 +44,7 @@ public class LoginController {
                     .body(Map.of("error", "Credenciales inválidas"));
         }
     }
-
+*/
 
 
 

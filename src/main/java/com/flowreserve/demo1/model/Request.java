@@ -10,21 +10,60 @@ import java.util.List;
 @Entity
 
 public class Request {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
+    // Médico que hace la petición
     @ManyToOne
-    @JoinColumn(name = "user_id") // Nombre de la columna en la tabla "request"
-    private Medico user;
+    @JoinColumn(name = "medico_id")  // mejor usar "medico_id" en lugar de "user_id"
+    private Medico medico;
 
-    public Medico getUser() {
-        return user;
+    // Paciente sobre el que se hace la petición
+    @ManyToOne
+    @JoinColumn(name = "paciente_id")
+    private Paciente paciente;
+
+    private LocalDateTime date;
+
+    private String state;
+
+    private String pressureA;
+
+    private String pressureB;
+
+    private String nombreArchivoZip;
+
+    private String campoComentarios;
+
+    private String codigo;
+
+
+    // Getters y setters
+
+    public Long getId() {
+        return id;
     }
 
-    public void setUser(Medico user) {
-        this.user = user;
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Medico getMedico() {
+        return medico;
+    }
+
+    public void setMedico(Medico medico) {
+        this.medico = medico;
+    }
+
+    public Paciente getPaciente() {
+        return paciente;
+    }
+
+    public void setPaciente(Paciente paciente) {
+        this.paciente = paciente;
     }
 
     public LocalDateTime getDate() {
@@ -35,8 +74,13 @@ public class Request {
         this.date = date;
     }
 
-    private LocalDateTime date;
-    private String state;
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
 
     public String getPressureA() {
         return pressureA;
@@ -54,10 +98,6 @@ public class Request {
         this.pressureB = pressureB;
     }
 
-    private String pressureA;
-
-    private String pressureB;
-
     public String getNombreArchivoZip() {
         return nombreArchivoZip;
     }
@@ -66,39 +106,26 @@ public class Request {
         this.nombreArchivoZip = nombreArchivoZip;
     }
 
-    private String nombreArchivoZip;
-
-
-
-
-    public Long getId() {
-        return id;
+    public String getCampoComentarios() {
+        return campoComentarios;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setCampoComentarios(String campoComentarios) {
+        this.campoComentarios = campoComentarios;
     }
 
-
-
-
-
-
-
-    public String getState() {
-        return state;
+    public String getCodigo() {
+        return codigo;
     }
 
-    public void setState(String state) {
-        this.state = state;
+    public void setCodigo(String codigo) {
+        this.codigo = codigo;
     }
 
-
-
-
-
-
-
-
+    @PrePersist
+    public void generarCodigo() {
+        long millis = System.currentTimeMillis();
+        this.codigo = "REQ-" + Long.toString(millis, 36).toUpperCase();
+    }
 
 }

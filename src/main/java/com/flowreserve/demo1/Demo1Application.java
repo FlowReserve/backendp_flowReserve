@@ -14,6 +14,7 @@ public class Demo1Application {
 		//Carga el fichero .env de la raíz del proyecto y establece las variables de entorno
 		if(Files.exists(Paths.get(".env"))){
 			Dotenv dotenv = Dotenv.load();
+
 			dotenv.entries().forEach(entry -> System.setProperty(entry.getKey(), entry.getValue()));
 		}
 		SpringApplication.run(Demo1Application.class, args);

@@ -32,11 +32,11 @@ public class UserDetailServiceImpl implements UserDetailsService {
     private PasswordEncoder passwordEncoder;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserModel userModel = userRepositoryTest.findUserModelByUsername(username)
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        UserModel userModel = userRepositoryTest.findUserModelByEmail(email)
                 .orElseThrow(() -> {
-                    System.out.println("El usuario: " + username + " no existe");
-                    return new UsernameNotFoundException("El usuario " + username + " no existe");
+                    System.out.println("El usuario: " + email + " no existe");
+                    return new UsernameNotFoundException("El usuario " + email + " no existe");
                 });
 
         List<SimpleGrantedAuthority> authorityList = new ArrayList<>();
@@ -49,7 +49,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
                 .flatMap(role -> role.getPermissionModelSet().stream())
                 .forEach(permission -> authorityList.add(new SimpleGrantedAuthority(permission.getName())));
 
-        return new User(userModel.getUsername(),
+        return new User(userModel.getEmail(),
                 userModel.getPassword(),
                 userModel.isEnabled(),
                 userModel.isAccountNoExpired(),

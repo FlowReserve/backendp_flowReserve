@@ -1,5 +1,8 @@
-package com.flowreserve.demo1;
+package com.flowreserve.demo1.config;
+import com.flowreserve.demo1.config.filter.JwtTokenValidator;
 import com.flowreserve.demo1.service.user.UserDetailServiceImpl;
+import com.flowreserve.demo1.utils.JWTUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -9,15 +12,13 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -29,6 +30,8 @@ import java.util.Arrays;
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
+@Autowired
+    private JWTUtils jwtUtils;
 
     // Configuración de seguridad HTTP
     @Bean
@@ -44,14 +47,15 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/invitaciones/**").permitAll()
                         .requestMatchers("/api/v1/medicos/**").permitAll()
                         .requestMatchers("/api/v1/pacientes/**").permitAll()
+
+                        .requestMatchers(HttpMethod.POST,"/Auth/**").permitAll()
+
                         //.anyRequest().authenticated()
                         .anyRequest().permitAll()
                 )
+                .addFilterBefore(new JwtTokenValidator(jwtUtils), BasicAuthenticationFilter.class);
 
-                .logout(logout -> logout
-                        .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                        .permitAll()
-                );
+
 
         return http.build();
     }

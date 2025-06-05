@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -36,6 +37,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.PostMapping;
 
 @RestController
 
@@ -51,11 +55,15 @@ public class RequestController
     private RequestService requestService;
 
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
     @PostMapping(value = "/crear", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> crearRequestConArchivos(
-            @RequestPart("json") RequestDTO requestDTO,
+            @RequestPart("json") String requestJson,
             @RequestPart("archivoZip") MultipartFile archivoZip) {
         try {
+            RequestDTO requestDTO = objectMapper.readValue(requestJson, RequestDTO.class);
             String codigo = requestService.crearRequestConArchivos(requestDTO, archivoZip);
             return ResponseEntity.ok("Request creada con código: " + codigo);
         } catch (Exception e) {
@@ -64,6 +72,8 @@ public class RequestController
                     .body("Error al crear la request: " + e.getMessage());
         }
     }
+
+
 
 
 }

@@ -37,8 +37,9 @@ public class PacienteService {
         paciente.setNombre(pacienteDTO.getNombrePaciente());
          paciente.setApellido(pacienteDTO.getApellidoPaciente());
          paciente.setNhc(pacienteDTO.getCodigoCNHC());
-        paciente = pacienteRepository.save(paciente);
         paciente.setMedico(medico);
+        paciente = pacienteRepository.save(paciente);
+
         return pacienteRepository.save(paciente);
     }
     public Paciente findById(Long id) {

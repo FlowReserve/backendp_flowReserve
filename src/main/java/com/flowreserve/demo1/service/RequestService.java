@@ -65,14 +65,14 @@ public class RequestService {
             String codigoRequest = request.getCodigo();
 
             // Carpeta: NombreMedico/CodigoRequest/
-            Path carpetaDestino = Paths.get("C:/Users/elias.pineiro/Desktop/zips", nombreCarpeta, codigoRequest);
+            Path carpetaDestino = Paths.get("C:/Users/elias.pineiro/Desktop/zips", nombreCarpeta, "request", codigoRequest);
             Files.createDirectories(carpetaDestino);
 
             // Guardar ZIP con nombre = codigoRequest.zip
             String nombreArchivoZip = codigoRequest + ".zip";
             Path rutaArchivoZip = carpetaDestino.resolve(nombreArchivoZip);
             Files.write(rutaArchivoZip, archivoZip.getBytes());
-            request.setNombreArchivoZip(nombreArchivoZip);
+            request.setNombreArchivoZip(rutaArchivoZip.toAbsolutePath().toString());
 
             // Crear archivo .txt con presiones y comentarios
             String contenidoTxt = "Presión A: " + dto.getPressureA() + "\n"

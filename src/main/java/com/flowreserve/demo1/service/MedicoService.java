@@ -9,8 +9,10 @@ import com.flowreserve.demo1.repository.MedicoRepository;
 import com.flowreserve.demo1.repository.RoleRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 
@@ -37,19 +39,21 @@ public Medico crearMedicoDesdeInvitacion(MedicoDTO medicoDTO) {
     Invitacion invitacion = invitacionRepository.findByCodigo(medicoDTO.getCodigoInvitacion())
             .orElseThrow(() -> new RuntimeException("Invitación no encontrada"));
     if (invitacion.isUsada()) {
-        throw new RuntimeException("Invitación ya fue usada");
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invitación ya fue usada");
     }
 
     Medico medico = new Medico();
     medico.setNombre(medicoDTO.getNombre());
     medico.setApellido(medicoDTO.getApellido());
     medico.setEmail(medicoDTO.getEmail());
-    medico.setPassword((medicoDTO.getContraseña()));
+    medico.setPassword(passwordEncoder.encode(medicoDTO.getContraseña()));
 
     //Role roleMedico = roleRepo.findByName("ROLE_MEDICO")
      //       .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
 
    // medico.getRoles().add(roleMedico);
+    medico.setHospital(invitacion.getHospital());
+
     medico = medicoRepo.save(medico);
 
 invitacion.setMedico(medico);

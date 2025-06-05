@@ -1,4 +1,5 @@
 package com.flowreserve.demo1.model;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -59,6 +60,7 @@ public class Paciente {
 
     @ManyToOne
     @JoinColumn(name = "medico_id")
+    @JsonIgnore
     private Medico medico;
 
 

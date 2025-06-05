@@ -13,6 +13,7 @@ import com.flowreserve.demo1.service.MedicoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import org.springframework.web.server.ResponseStatusException;
 
 @RestController
@@ -29,13 +30,18 @@ public class MedicoController {
     }
 
 
-
     @PostMapping
     public ResponseEntity<?> crearMedico(@Valid @RequestBody MedicoDTO medicoDTO) {
-        Medico medicoCreado = medicoService.crearMedicoDesdeInvitacion(medicoDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(medicoCreado);
+        try {
+            Medico medicoCreado = medicoService.crearMedicoDesdeInvitacion(medicoDTO);
+            return ResponseEntity.status(HttpStatus.CREATED).body(medicoCreado);
+        } catch (ResponseStatusException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getReason());
+        }
     }
-    }
+
+
+}
 
 
 

@@ -1,5 +1,6 @@
 package com.flowreserve.demo1.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -17,7 +18,10 @@ public class Request {
 
     // Médico que hace la petición
     @ManyToOne
-    @JoinColumn(name = "medico_id")  // mejor usar "medico_id" en lugar de "user_id"
+    @JsonIgnore
+    @JoinColumn(name = "medico_id")
+
+    // mejor usar "medico_id" en lugar de "user_id"
     private Medico medico;
 
     // Paciente sobre el que se hace la petición

@@ -22,6 +22,9 @@ public class UserModel {
 
     private String username;
 
+    private String lastname ;
+
+
     private String password;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)

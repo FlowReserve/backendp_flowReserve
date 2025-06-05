@@ -1,4 +1,4 @@
-package com.flowreserve.demo1.service;
+/*package com.flowreserve.demo1.service;
 
 import com.flowreserve.demo1.model.*;
 import com.flowreserve.demo1.repository.UserRepository;
@@ -32,4 +32,4 @@ public class CustomUserDetailsService implements UserDetailsService {
                         .collect(Collectors.toSet())
         );
     }
-}
+}*/

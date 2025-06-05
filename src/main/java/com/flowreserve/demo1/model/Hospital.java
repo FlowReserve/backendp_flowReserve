@@ -1,5 +1,6 @@
 package com.flowreserve.demo1.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -47,7 +48,9 @@ public class Hospital  {
     @Column(unique = true, nullable = false)
     private Long codigo;
 
+    //evitar que se repitan los datos del Medico muchas veces en la respuesta (por ejemplo, al incluir el Hospital que a su vez tiene más Medico),
     @OneToMany(mappedBy = "hospital", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<Medico> medicos;
 
 }

@@ -1,4 +1,5 @@
 package com.flowreserve.demo1.model;
+import com.flowreserve.demo1.model.role.RoleModel;
 import jakarta.persistence.*;
 
 import com.flowreserve.demo1.model.Role;
@@ -6,6 +7,17 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.util.HashSet;
+import java.util.Set;
+
+@Setter
+@Getter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED) // o SINGLE_TABLE o TABLE_PER_CLASS según lo que prefieras
@@ -16,71 +28,41 @@ public class User {
 
     private String nombre;
     private String apellido;
+    @Column(unique = true)
     private String email;
     private String password;
 
 
-
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public String getApellido() {
-        return apellido;
-    }
-
-    public void setApellido(String apellido) {
-        this.apellido = apellido;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
+    //@ManyToMany(fetch = FetchType.EAGER)
+    //@JoinTable(
+    //        name = "user_roles",
+    //        joinColumns = @JoinColumn(name = "user_id"),
+    //        inverseJoinColumns = @JoinColumn(name = "role_id")
+   // )
 
 
 
-    public String getPassword() {
-        return password;
-    }
+   // private Set<Role> roles = new HashSet<>();
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
+//    public Set<Role> getRoles() {
+   //     return roles;
+ //   }
 
-
-
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "user_roles",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id")
-    )
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(name = "user_roles_test", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<RoleModel> roleModelSet = new HashSet<>();
 
 
 
-    private Set<Role> roles = new HashSet<>();
+    @Column(name="is_enabled")
+    private boolean isEnabled;
+    @Column(name="account_no_expired")
+    private boolean accountNoExpired;
 
-    public Set<Role> getRoles() {
-        return roles;
-    }
+    @Column(name="account_no_locked")
+    private boolean accountNoLocked;
 
-
+    @Column(name="credential_no_expired")
+    private boolean credentialNoExpired;
 
 }

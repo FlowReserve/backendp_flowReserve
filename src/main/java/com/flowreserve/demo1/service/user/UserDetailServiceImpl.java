@@ -2,8 +2,8 @@ package com.flowreserve.demo1.service.user;
 
 import com.flowreserve.demo1.dto.authentication.AuthLoginRequest;
 import com.flowreserve.demo1.dto.authentication.AuthReponse;
-import com.flowreserve.demo1.model.UserModel;
-import com.flowreserve.demo1.repository.user.UserRepositoryTest;
+import com.flowreserve.demo1.model.User;
+import com.flowreserve.demo1.repository.UserRepository;
 import com.flowreserve.demo1.utils.JWTUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -11,7 +11,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -25,7 +24,7 @@ import java.util.List;
 public class UserDetailServiceImpl implements UserDetailsService {
 
     @Autowired
-    private UserRepositoryTest userRepositoryTest;
+    private UserRepository userRepository;
     @Autowired
     private JWTUtils jwtUtils;
     @Autowired
@@ -33,8 +32,8 @@ public class UserDetailServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        UserModel userModel = userRepositoryTest.findUserModelByEmail(email)
-                .orElseThrow(() -> {
+        User userDAO = userRepository.findByEmail(email)
+               .orElseThrow(() -> {
                     System.out.println("El usuario: " + email + " no existe");
                     return new UsernameNotFoundException("El usuario " + email + " no existe");
                 });
@@ -42,21 +41,25 @@ public class UserDetailServiceImpl implements UserDetailsService {
         List<SimpleGrantedAuthority> authorityList = new ArrayList<>();
 
         //Convierte los roles del usuario en un GrantedAuthoritie
-        userModel.getRoleModelSet()
+
+        userDAO.getRoleModelSet()
                 .forEach(role -> authorityList.add(new SimpleGrantedAuthority("ROLE_".concat(role.getRoleEnum().name()))));
 
-        userModel.getRoleModelSet().stream()
+        userDAO.getRoleModelSet().stream()
                 .flatMap(role -> role.getPermissionModelSet().stream())
                 .forEach(permission -> authorityList.add(new SimpleGrantedAuthority(permission.getName())));
 
-        return new User(userModel.getEmail(),
-                userModel.getPassword(),
-                userModel.isEnabled(),
-                userModel.isAccountNoExpired(),
-                userModel.isCredentialNoExpired(),
-                userModel.isAccountNoLocked(),
+        return new org.springframework.security.core.userdetails.User(userDAO.getEmail(),
+                userDAO.getPassword(),
+                userDAO.isEnabled(),
+                userDAO.isAccountNoExpired(),
+                userDAO.isCredentialNoExpired(),
+                userDAO.isAccountNoLocked(),
                 authorityList);
     }
+
+
+
 
 
     public AuthReponse loginUser(AuthLoginRequest authLoginRequest) {

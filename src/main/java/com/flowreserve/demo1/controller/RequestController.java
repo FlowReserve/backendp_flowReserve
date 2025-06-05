@@ -49,33 +49,6 @@ public class RequestController
 
     @Autowired
     private RequestService requestService;
-/*
-    // Mostrar el formulario
-    @GetMapping("/nuevo")
-    public String mostrarFormulario(Model model) {
-        model.addAttribute("requestDTO", new RequestDTO());
-        return "crearPeticion"; // Nombre del archivo HTML en templates/
-    }
-
-    // Procesar el formulario
-    @PostMapping("/crear")
-    public String crearRequestConArchivos(
-            @ModelAttribute("requestDTO") RequestDTO dto,
-            @RequestParam("archivoZip") MultipartFile archivoZip,
-            Model model) {
-
-        try {
-            String codigo = requestService.crearRequestConArchivos(dto, archivoZip);
-            model.addAttribute("mensaje", "Request creada con éxito. Código: " + codigo);
-        } catch (Exception e) {
-            model.addAttribute("error", "Error: " + e.getMessage());
-        }
-
-        return "crearPeticion"; // Muestra la misma vista con el resultado
-    }
-
-*/
-
 
 
     @PostMapping(value = "/crear", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

@@ -1,4 +1,5 @@
 package com.flowreserve.demo1.model;
+import com.flowreserve.demo1.model.Request.Request;
 import jakarta.persistence.*;
 
 import java.util.Date;

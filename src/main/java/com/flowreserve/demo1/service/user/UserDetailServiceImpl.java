@@ -2,8 +2,8 @@ package com.flowreserve.demo1.service.user;
 
 import com.flowreserve.demo1.dto.authentication.AuthLoginRequest;
 import com.flowreserve.demo1.dto.authentication.AuthReponse;
-import com.flowreserve.demo1.model.User;
-import com.flowreserve.demo1.repository.UserRepository;
+import com.flowreserve.demo1.model.User.User;
+import com.flowreserve.demo1.repository.user.UserRepository;
 import com.flowreserve.demo1.utils.JWTUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;

@@ -75,7 +75,7 @@ public class RequestService {
             String codigoRequest = request.getCodigo();
 
             // Carpeta: NombreMedico/CodigoRequest/
-            Path carpetaDestino = Paths.get("C:/Users/elias.pineiro/Desktop/zips", nombreCarpeta, "request", codigoRequest);
+            Path carpetaDestino = Paths.get("C:\\BASE_DATOS", nombreCarpeta, codigoRequest,"request");
             Files.createDirectories(carpetaDestino);
 
             // Guardar ZIP con nombre = codigoRequest.zip

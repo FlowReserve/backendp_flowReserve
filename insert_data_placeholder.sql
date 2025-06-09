@@ -31,12 +31,33 @@ INSERT INTO users_test (id, credential_no_expired, account_no_expired, account_n
 (3, TRUE, TRUE, TRUE, 'elias@flowreserve.es', TRUE, '$2a$10$EaOIPn9whrM5QV/BiIL9Z.d./GcGalcpOE/WGOLSL.tUjuQ/ek9JG'), -- moderator 12345
 (4, TRUE, TRUE, TRUE, 'user@test.com', TRUE, '$2a$10$EaOIPn9whrM5QV/BiIL9Z.d./GcGalcpOE/WGOLSL.tUjuQ/ek9JG'); -- user 12345
 
+
 -- ASIGNA ROLES A LOS USUARIOS
 INSERT INTO user_roles_test (user_id, role_id) VALUES
 (1,4),
 (2,3),
 (3,3),
 (4,2);
+
+INSERT INTO hospital (id, codigo, nombre) VALUES 
+(1, 123456, "HOSPITAL CHUS SANTIAGO"),
+(2, 654321, "HOSPITAL PONTEVEDRA");
+
+INSERT INTO user (id, account_no_expired, account_no_locked, apellido, credential_no_expired, email, is_enabled, nombre, password) VALUES
+(1, TRUE, TRUE, "Lopez Sanchez",TRUE, 'test@test.com', TRUE, "Ramirez",'$2a$10$EaOIPn9whrM5QV/BiIL9Z.d./GcGalcpOE/WGOLSL.tUjuQ/ek9JG'), -- 12345
+(2, TRUE, TRUE, "Gago", TRUE, 'martin.gago@flowreserve.es', TRUE, "Martin", '$2a$10$EaOIPn9whrM5QV/BiIL9Z.d./GcGalcpOE/WGOLSL.tUjuQ/ek9JG'); -- 12345
+
+INSERT INTO medico (id, especialidad, hospital_id) VALUES 
+(1, "CARDIOLOGO", 1),
+(2, "CARDIOLOGO", 2);
+
+INSERT INTO invitaciones (id, codigo, usada, hospital_id, medico_id) VALUES
+(3, "INV_000002", TRUE, 1, 1),
+(4, "INV_000003", TRUE, 2, 2);
+
+INSERT INTO paciente(id, apellido, nhc, nombre, medico_id) VALUES
+(1, "Casal", "12345678H", "Paula", 1),
+(2, "Naranjo", "65432134H", "Carlos", 1);
 
 SELECT 
     u.username,

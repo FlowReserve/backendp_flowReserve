@@ -51,3 +51,17 @@ GROUP BY u.id, u.username
 ORDER BY u.username;
 
 
+
+
+INSERT INTO hospital (id, codigo, nombre)
+VALUES
+  (1, 1234, 'Hospital Central'),
+  (2, 4321, 'Hospital Norte'),
+  (3, 5678, 'Hospital Sur'),
+  (4, 8765, 'Hospital del Este');
+
+INSERT INTO invitaciones (codigo, hospital_id, usada) VALUES
+('INV-025F225F ', 1, 0),
+('INV-035G224F ', 1, 0),
+('INV-045L223F ', 2, 0);
+

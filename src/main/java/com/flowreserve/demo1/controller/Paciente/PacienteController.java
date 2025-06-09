@@ -26,7 +26,7 @@ public class PacienteController {
     public PacienteController(PacienteService pacienteService) {
         this.pacienteService = pacienteService;
     }
-
+//devolver dto y no un ?
     @PostMapping("/new")
     public ResponseEntity<?> crearPaciente(@Valid @RequestBody PacienteDTO pacienteDTO) {
         pacienteService.crearPaciente(pacienteDTO);

@@ -11,6 +11,7 @@ import com.flowreserve.demo1.service.Medico.MedicoService;
 import com.flowreserve.demo1.service.Paciente.PacienteService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
@@ -44,6 +45,10 @@ public class RequestService {
     @Autowired
     private PacienteRepository pacienteRepository;
 
+
+    @Value("${ROOT_PATH}")
+    private String rootPath;
+
     @Transactional
     public String crearRequestConArchivos(RequestDTO dto, MultipartFile archivoZip) throws IOException {
         Request request = new Request();
@@ -74,15 +79,17 @@ public class RequestService {
             String nombreCarpeta = medico.getNombre().replaceAll("\\s+", "_");
             String codigoRequest = request.getCodigo();
 
-            // Carpeta: NombreMedico/CodigoRequest/
-            Path carpetaDestino = Paths.get("C:\\BASE_DATOS", nombreCarpeta, codigoRequest,"request");
+            Path carpetaDestino = Paths.get(rootPath, nombreCarpeta, codigoRequest, "request");
             Files.createDirectories(carpetaDestino);
 
             // Guardar ZIP con nombre = codigoRequest.zip
             String nombreArchivoZip = codigoRequest + ".zip";
             Path rutaArchivoZip = carpetaDestino.resolve(nombreArchivoZip);
             Files.write(rutaArchivoZip, archivoZip.getBytes());
-            request.setNombreArchivoZip(rutaArchivoZip.toAbsolutePath().toString());
+
+            // Guardar ruta relativa en la BD
+            Path rutaRelativa = Paths.get(nombreCarpeta, codigoRequest, "request", nombreArchivoZip);
+            request.setNombreArchivoZip(rutaRelativa.toString());
 
             // Crear archivo .txt con presiones y comentarios
             String contenidoTxt = "Presión A: " + dto.getPressureA() + "\n"

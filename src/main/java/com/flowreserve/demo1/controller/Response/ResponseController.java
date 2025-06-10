@@ -4,14 +4,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flowreserve.demo1.dto.Response.ResponseDTO;
 import com.flowreserve.demo1.service.Response.ResponseService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+
 @RestController
-@RequestMapping("/responses")
+@RequestMapping("/api/v1/responses")
 public class ResponseController {
 
     private final ResponseService responseService;
@@ -34,5 +39,20 @@ public class ResponseController {
                     .body("Error al guardar archivo: " + e.getMessage());
         }
     }
+
+    @GetMapping("/medico/descargar/{responseId}")
+    public ResponseEntity<Resource> descargarArchivo(@PathVariable Long responseId) throws IOException {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Resource archivo = responseService.obtenerArchivoDelMedico(responseId);
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + archivo.getFilename() + "\"")
+                .body(archivo);
+    }
+
+
+
+
 
 }

@@ -19,4 +19,8 @@ public interface PacienteRepository extends JpaRepository<Paciente, Long> {
     @Query("SELECT p FROM Paciente p WHERE p.medico.id = :idMedico")
     Page<Paciente> findByMedicoId(@Param("idMedico") Long idMedico, Pageable pageable);
 
+    @Query("SELECT p FROM Paciente p WHERE p.id = :pacienteId AND p.medico.id = :medicoId")
+    Optional<Paciente> findByIdAndMedicoId(@Param("pacienteId") Long pacienteId, @Param("medicoId") Long medicoId);
+
+
 }

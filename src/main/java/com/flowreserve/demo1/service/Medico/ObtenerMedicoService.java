@@ -5,6 +5,7 @@ import com.flowreserve.demo1.exceptions.CustomExceptions;
 import com.flowreserve.demo1.model.Medico.Medico;
 import com.flowreserve.demo1.repository.Medico.MedicoRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jdk.swing.interop.SwingInterOpUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -24,5 +25,11 @@ public class ObtenerMedicoService {
     public Medico obtenerMedicoPorId(Long id){
         return medicoRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Médico con ID " + id + " no fue encontrado en la Base de datos"));
+    }
+
+    public Long obtenerIdMedicoPorMail(String email){
+        return medicoRepository.findIdByEmail(email).orElseThrow(
+                () -> new EntityNotFoundException("Medico con email: " + email + " no ha sido encontrado"));
+
     }
 }

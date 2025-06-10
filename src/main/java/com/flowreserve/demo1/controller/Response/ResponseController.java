@@ -49,7 +49,8 @@ public class ResponseController {
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + archivo.getFilename() + "\"")
                 .body(archivo);
-    }
+    } // referencia listado solicitudes de un medico acceso que pdf pode descargar id desde frontmen mirar , codigo generado datos de una
+    // pasalo entidad entidad intermedia asocaicion relacion   response no sabe nada de request , sin referencia ,
 
 
 

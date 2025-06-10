@@ -138,4 +138,7 @@ public class RequestService {
         return requestRepository.findByPaciente_IdAndMedico_Id(paciente.getId(), medico.getId(), pageable);
 
     }
+    public Page<Request> ListarTodasLasRequests(Pageable pageable) {
+        return requestRepository.findAll(pageable);
+    }
 }

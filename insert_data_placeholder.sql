@@ -24,18 +24,18 @@ INSERT INTO roles_permissions_test (role_id, permission_id) VALUES
 (3,1),
 (3,2),
 (3,3),
-(3,4);
+(3,4),
  -- doctor
 (4,1),
---(4,2),
+(4,2),
 (4,3),
-(4,4);
+(4,4),
 
  -- visualizer
 (4,1),
---(4,2),
+(4,2),
 (4,3),
-(4,4);
+(4,4),
 
 
  -- admin
@@ -61,7 +61,7 @@ INSERT INTO roles_permissions_test (role_id, permission_id) VALUES
 
 
 -- CREA USUARIOS EN LA BASE DE DATOS
-INSERT INTO users_test (id, credential_no_expired, account_no_expired, account_no_locked, username, is_enabled, password) VALUES
+INSERT INTO user (id, credential_no_expired, account_no_expired, account_no_locked, nombre, is_enabled, password) VALUES
 (1, TRUE, TRUE, TRUE, 'test@test.com', TRUE, '$2a$10$EaOIPn9whrM5QV/BiIL9Z.d./GcGalcpOE/WGOLSL.tUjuQ/ek9JG'), -- admin 12345
 (2, TRUE, TRUE, TRUE, 'martin.gago@flowreserve.es', TRUE, '$2a$10$EaOIPn9whrM5QV/BiIL9Z.d./GcGalcpOE/WGOLSL.tUjuQ/ek9JG'), -- moderator 12345
 (3, TRUE, TRUE, TRUE, 'elias@flowreserve.es', TRUE, '$2a$10$EaOIPn9whrM5QV/BiIL9Z.d./GcGalcpOE/WGOLSL.tUjuQ/ek9JG'), -- moderator 12345

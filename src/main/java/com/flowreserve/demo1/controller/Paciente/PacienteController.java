@@ -28,14 +28,14 @@ public class PacienteController {
         this.pacienteService = pacienteService;
     }
 //devolver dto y no un ?
-@PreAuthorize("hasRole('DOCTOR')")
+//@PreAuthorize("hasRole('DOCTOR')")
 @PostMapping("/new")
     public ResponseEntity<?> crearPaciente(@Valid @RequestBody PacienteDTO pacienteDTO) {
         pacienteService.crearPaciente(pacienteDTO);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(Map.of("mensaje", "Paciente creado correctamente"));
     }
-    @PreAuthorize("hasRole('DOCTOR')")
+    //@PreAuthorize("hasRole('DOCTOR')")
     @GetMapping("/mis-pacientes")
     public ResponseEntity<Page<Paciente>> listarPacientesDelMedicoAutenticado(
             @PageableDefault(size = 10, sort = "apellido") Pageable pageable) {

@@ -10,19 +10,55 @@ INSERT INTO roles_test (id, role_name) VALUES
 (1, 'GUESS'),
 (2, 'USER'),
 (3, 'DEVELOPER'),
-(4, 'ADMIN');
+(4, 'DOCTOR'),
+(5, 'VISUALIZER'),
+(6, 'ADMIN');
+
 
 -- CREA RELACIONES ENTRE ROLES Y PERMISOS
 INSERT INTO roles_permissions_test (role_id, permission_id) VALUES
 (1,4), -- guess
 (2,4), -- user
-(3,1), -- moderator
+
+-- admin
+(3,1),
 (3,2),
 (3,3),
-(4,1), -- admin
-(4,2),
+(3,4);
+ -- doctor
+(4,1),
+--(4,2),
 (4,3),
 (4,4);
+
+ -- visualizer
+(4,1),
+--(4,2),
+(4,3),
+(4,4);
+
+
+ -- admin
+(6,1),
+
+(6,3),
+(6,4);
+
+INSERT INTO roles_permissions_test (role_id, permission_id) VALUES
+(1,4),
+(2,4),
+(3,1),
+(3,2),
+(3,3),
+(3,4),
+(4,1),
+(4,3),
+(4,4),
+(6,1),
+(6,3),
+(6,4);
+
+
 
 -- CREA USUARIOS EN LA BASE DE DATOS
 INSERT INTO users_test (id, credential_no_expired, account_no_expired, account_no_locked, username, is_enabled, password) VALUES
@@ -39,17 +75,16 @@ INSERT INTO user_roles_test (user_id, role_id) VALUES
 (4,2);
 
 SELECT 
-    u.username,
+    u.email AS username,
     GROUP_CONCAT(DISTINCT r.role_name ORDER BY r.role_name SEPARATOR ', ') AS roles,
     GROUP_CONCAT(DISTINCT p.name ORDER BY p.name SEPARATOR ', ') AS permissions
-FROM users_test u
+FROM user u
 JOIN user_roles_test ur ON u.id = ur.user_id
 JOIN roles_test r ON ur.role_id = r.id
 JOIN roles_permissions_test rp ON r.id = rp.role_id
 JOIN permissions_test p ON rp.permission_id = p.id
-GROUP BY u.id, u.username
-ORDER BY u.username;
-
+GROUP BY u.id, u.email
+ORDER BY u.email;
 
 
 

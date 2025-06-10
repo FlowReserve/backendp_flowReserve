@@ -1,3 +1,4 @@
+/*
 package com.flowreserve.demo1.model;
 
 import com.flowreserve.demo1.model.role.RoleModel;
@@ -45,3 +46,4 @@ public class UserModel {
     @Column(name="credential_no_expired")
     private boolean credentialNoExpired;
 }
+*/

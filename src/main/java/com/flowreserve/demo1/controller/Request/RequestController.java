@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
@@ -48,7 +49,7 @@ public class RequestController
         }
     }
   //admin
-    @GetMapping("/listarRequests")
+    @GetMapping("/listarRequestsMedico")
     public ResponseEntity<Page<Request>> getMyRequests(Pageable pageable) {
         Page<Request> requests = requestService.listarRequestsByMedico(pageable);
         return ResponseEntity.ok(requests);
@@ -57,6 +58,13 @@ public class RequestController
     public  ResponseEntity<Page<Request>> getMyRequestPatient(@RequestParam long pacienteId,Pageable pageable){
         Page<Request> requests = requestService.listarRequestByPaciente(pacienteId,pageable);
         return  ResponseEntity.ok(requests);
+    }
+        //ordenar por medico y estado dto
+    //@PreAuthorize("hasAnyRole('ADMIN', 'DEVELOPER')")
+    @GetMapping("/listarRequestAdmin")
+    public ResponseEntity<Page<Request>> listarTodasLasRequests(Pageable pageable) {
+        Page<Request> requests = requestService.ListarTodasLasRequests(pageable);
+        return ResponseEntity.ok(requests);
     }
 
 

@@ -1,5 +1,6 @@
 package com.flowreserve.demo1.controller.Paciente;
 import com.flowreserve.demo1.dto.Paciente.PacienteDTO;
+import com.flowreserve.demo1.dto.Paciente.PacienteResponseDTO;
 import com.flowreserve.demo1.dto.global.ApiResponseDTO;
 import com.flowreserve.demo1.mapper.PacienteMapper;
 import com.flowreserve.demo1.model.Paciente.Paciente;
@@ -58,15 +59,15 @@ public class PacienteController {
      * @return APIResponse con la información del paciente sobre el que se ha realizado la consulta.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponseDTO<PacienteDTO>> obtenerPacienteDeMedicoAutenticado(@PathVariable("id") Long idPaciente){
+    public ResponseEntity<ApiResponseDTO<PacienteResponseDTO>> obtenerPacienteDeMedicoAutenticado(@PathVariable("id") Long idPaciente){
         //Comprueba datos del usuario authenticado
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Long idMedico = obtenerMedicoService.obtenerIdMedicoPorMail(auth.getName());
         //Comprueba que el paciente está asociado con el medico authenticado
         Paciente paciente = pacienteService.findPacienteByIdAndMedicoId(idPaciente, idMedico);
-        PacienteDTO pacienteDTO = pacienteMapper.toPacienteDTO(paciente);
+        PacienteResponseDTO pacienteResponseDTO = pacienteMapper.toPacienteResponseDTO(paciente);
 
-        return ApiResponseDTO.success("Paciente encontrado con éxito", HttpStatus.OK.value(), pacienteDTO, HttpStatus.OK);
+        return ApiResponseDTO.success("Paciente encontrado con éxito", HttpStatus.OK.value(), pacienteResponseDTO, HttpStatus.OK);
     }
 
 }

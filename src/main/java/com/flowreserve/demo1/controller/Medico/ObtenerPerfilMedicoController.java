@@ -32,6 +32,6 @@ public class ObtenerPerfilMedicoController {
     public ResponseEntity<ApiResponseDTO<MedicoProfileDTO>> obtenerMedicoById(@PathVariable Long id){
         Medico medico = obtenerMedicoService.obtenerMedicoPorId(id);
         MedicoProfileDTO medicoProfileDTO = medicoMapper.toMedicoProfileDTO(medico);
-        return ApiResponseDTO.success("Médico encontrado con éxito", 200,medicoProfileDTO, HttpStatus.OK);
+        return ApiResponseDTO.success("Médico encontrado con éxito", medicoProfileDTO, HttpStatus.OK);
     }
 }

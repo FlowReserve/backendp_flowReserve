@@ -10,7 +10,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +22,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 
@@ -44,11 +49,23 @@ public class PacienteController {
 
     //@PreAuthorize("hasRole('DOCTOR')")
     @GetMapping("/mis-pacientes")
-    public ResponseEntity<Page<Paciente>> listarPacientesDelMedicoAutenticado(
-            @PageableDefault(size = 10, sort = "apellido") Pageable pageable) {
+    public ResponseEntity<ApiResponseDTO<Page<PacienteResponseDTO>>> listarPacientesDelMedicoAutenticado(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir) {
 
+        // Limitar tamaño de página a 25
+        int pageSize = Math.min(size, 25);
+
+        Sort sort = sortDir.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+
+        Pageable pageable = PageRequest.of(page, pageSize, sort);
         Page<Paciente> pacientes = pacienteService.obtenerPacientesPorMedicoAutenticado(pageable);
-        return ResponseEntity.ok(pacientes);
+        Page<PacienteResponseDTO> pacienteDTOs = pacientes.map(pacienteMapper::toPacienteResponseDTO);
+        return ApiResponseDTO.success("Listado de pacientes encontrado con éxito", pacienteDTOs, HttpStatus.OK);
     }
 
     /**
@@ -67,7 +84,7 @@ public class PacienteController {
         Paciente paciente = pacienteService.findPacienteByIdAndMedicoId(idPaciente, idMedico);
         PacienteResponseDTO pacienteResponseDTO = pacienteMapper.toPacienteResponseDTO(paciente);
 
-        return ApiResponseDTO.success("Paciente encontrado con éxito", HttpStatus.OK.value(), pacienteResponseDTO, HttpStatus.OK);
+        return ApiResponseDTO.success("Paciente encontrado con éxito",pacienteResponseDTO, HttpStatus.OK);
     }
 
 }

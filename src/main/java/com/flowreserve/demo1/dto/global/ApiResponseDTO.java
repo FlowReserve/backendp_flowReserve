@@ -46,19 +46,18 @@ public class ApiResponseDTO<T> {
     // Método para respuestas de éxito
     public static <T> ResponseEntity<ApiResponseDTO<T>> success(
             String message,
-            Integer serverCode,
             T responseObject,
             HttpStatus httpStatus
     ) {
-        return build(true, message, serverCode, responseObject, httpStatus);
+        return build(true, message, httpStatus.value(), responseObject, httpStatus);
     }
 
     // Método para respuestas de error
     public static <T> ResponseEntity<ApiResponseDTO<T>> error(
             String message,
-            Integer serverCode,
             HttpStatus httpStatus
     ) {
-        return build(false, message, serverCode, null, httpStatus);
+        return build(false, message, httpStatus.value(), null, httpStatus);
     }
+
 }

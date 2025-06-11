@@ -16,6 +16,6 @@ public class CustomExceptionHandler {
 
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<ApiResponseDTO<Object>> handleEntityNotfound(EntityNotFoundException e){
-        return ApiResponseDTO.error(e.getMessage(), 404, HttpStatus.NOT_FOUND);
+        return ApiResponseDTO.error(e.getMessage(), HttpStatus.NOT_FOUND);
     }
 }

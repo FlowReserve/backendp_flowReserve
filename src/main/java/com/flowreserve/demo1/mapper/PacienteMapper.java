@@ -26,4 +26,5 @@ public class PacienteMapper {
                 .codigoNHC(paciente.getNhc())
                 .build();
     }
+
 }

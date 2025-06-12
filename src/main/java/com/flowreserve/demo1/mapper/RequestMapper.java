@@ -2,6 +2,7 @@ package com.flowreserve.demo1.mapper;
 
 import com.flowreserve.demo1.dto.Request.RequestDTO;
 import com.flowreserve.demo1.dto.Request.RequestResponseDTO;
+import com.flowreserve.demo1.model.Request.EstadoSolicitudEnum;
 import com.flowreserve.demo1.model.Request.Request;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

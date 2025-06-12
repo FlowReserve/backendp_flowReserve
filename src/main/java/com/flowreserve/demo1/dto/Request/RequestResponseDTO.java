@@ -1,5 +1,6 @@
 package com.flowreserve.demo1.dto.Request;
 import com.flowreserve.demo1.dto.Paciente.PacienteResponseDTO;
+import com.flowreserve.demo1.model.Request.EstadoSolicitudEnum;
 import lombok.*;
 
 @Getter
@@ -8,9 +9,10 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class RequestResponseDTO {
+    private EstadoSolicitudEnum state;
+
     private Long id;
     private String codigo;
-    private String state;
     private String nombreArchivoZip;
 
     private PacienteResponseDTO paciente;

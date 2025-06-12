@@ -35,19 +35,10 @@ public class MedicoService {
 public Medico crearMedicoDesdeInvitacion(MedicoDTO medicoDTO) {
 
     Invitacion invitacion = invitacionRepository.findByCodigo(medicoDTO.getCodigoInvitacion())
-            .orElseThrow(() -> new RuntimeException("Invitación no encontrada"));
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Invitación no encontrada"));
     if (invitacion.isUsada()) {
-        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invitación ya fue usada");
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La invitación ya fue usada");
     }
-
-   // Medico medico = new Medico();
-   // medico.setNombre(medicoDTO.getNombre());
-   // medico.setApellido(medicoDTO.getApellido());
-   // medico.setEmail(medicoDTO.getEmail());
-   // medico.setPassword(passwordEncoder.encode(medicoDTO.getContraseña()));
-
-
-
 
     //Role roleMedico = roleRepo.findByName("ROLE_MEDICO")
      //       .orElseThrow(() -> entity not found ("Rol no encontrado"));
@@ -65,8 +56,6 @@ invitacionRepository.save(invitacion);
 
 return medico;
 }
-
-
 
     public Medico findByEmail(String email) {
         return medicoRepo.findByEmail(email)

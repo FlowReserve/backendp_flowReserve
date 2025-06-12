@@ -1,6 +1,11 @@
 package com.flowreserve.demo1.controller.Medico;
 
 import com.flowreserve.demo1.dto.Medico.MedicoDTO;
+import com.flowreserve.demo1.dto.Medico.MedicoProfileDTO;
+import com.flowreserve.demo1.dto.Medico.MedicoResponseDTO;
+import com.flowreserve.demo1.dto.global.ApiResponseDTO;
+import com.flowreserve.demo1.mapper.MedicoMapper;
+import com.flowreserve.demo1.mapper.PacienteMapper;
 import com.flowreserve.demo1.model.Medico.Medico;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -14,7 +19,8 @@ import org.springframework.web.server.ResponseStatusException;
 @RestController
 @RequestMapping("/api/v1/medicos")
 public class MedicoController {
-
+    @Autowired
+    private  MedicoMapper medicoMapper;
 
 
     private final MedicoService medicoService;
@@ -26,16 +32,17 @@ public class MedicoController {
 
 
     @PostMapping
-    public ResponseEntity<?> crearMedico(@Valid @RequestBody MedicoDTO medicoDTO) {
-        try {
-            Medico medicoCreado = medicoService.crearMedicoDesdeInvitacion(medicoDTO);
-            return ResponseEntity.status(HttpStatus.CREATED).body(medicoCreado);
-        } catch (ResponseStatusException ex) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getReason());
-        }
+    public ResponseEntity<ApiResponseDTO<MedicoProfileDTO>> crearMedico(@Valid @RequestBody MedicoDTO medicoDTO) {
+
+
+        Medico medicoCreado = medicoService.crearMedicoDesdeInvitacion(medicoDTO);
+        MedicoProfileDTO medicoProfileDTO= medicoMapper.toMedicoProfileDTO(medicoCreado);
+
+
+        return ApiResponseDTO.success("Medico creado  con éxito", medicoProfileDTO, HttpStatus.CREATED);
+
+
     }
-
-
 }
 
 

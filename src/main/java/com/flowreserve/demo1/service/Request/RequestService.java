@@ -4,6 +4,7 @@ import com.flowreserve.demo1.dto.Request.RequestDTO;
 import com.flowreserve.demo1.mapper.RequestMapper;
 import com.flowreserve.demo1.model.Medico.Medico;
 import com.flowreserve.demo1.model.Paciente.Paciente;
+import com.flowreserve.demo1.model.Request.EstadoSolicitudEnum;
 import com.flowreserve.demo1.model.Request.Request;
 import com.flowreserve.demo1.repository.Medico.MedicoRepository;
 import com.flowreserve.demo1.repository.Paciente.PacienteRepository;
@@ -60,7 +61,7 @@ public class RequestService {
 
         // Fecha y estado
         request.setDate(LocalDateTime.now());
-        request.setState("PENDIENTE");
+        request.setState(EstadoSolicitudEnum.PENDIENTE);
 
 
 

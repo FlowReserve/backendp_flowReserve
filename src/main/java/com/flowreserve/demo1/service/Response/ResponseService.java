@@ -1,6 +1,7 @@
 package com.flowreserve.demo1.service.Response;
 
 import com.flowreserve.demo1.model.Medico.Medico;
+import com.flowreserve.demo1.model.Request.EstadoSolicitudEnum;
 import com.flowreserve.demo1.model.Request.Request;
 import com.flowreserve.demo1.model.Response.Response;
 import com.flowreserve.demo1.repository.Medico.MedicoRepository;
@@ -81,6 +82,9 @@ public class ResponseService {
         respuesta.setFechaCreacion(LocalDateTime.now());
 
         responseRepository.save(respuesta);
+
+        request.setState(EstadoSolicitudEnum.COMPLETADA);  //con transacccional no hay que guardar 2 veces
+        requestRepository.save(request);
     }
 
 

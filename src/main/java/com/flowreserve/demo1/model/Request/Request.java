@@ -31,7 +31,6 @@ public class Request {
 
     // Paciente sobre el que se hace la petición
     @ManyToOne
-    @JsonIgnore
     @JoinColumn(name = "paciente_id")
     private Paciente paciente;
 

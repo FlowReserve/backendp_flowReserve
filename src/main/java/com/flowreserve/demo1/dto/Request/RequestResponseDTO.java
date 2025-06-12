@@ -13,7 +13,7 @@ public class RequestResponseDTO {
     private String state;
     private String nombreArchivoZip;
 
-    private PacienteResponseDTO pacienteResponseDTO;
+    private PacienteResponseDTO paciente;
 
     //DTO MEDICO Y PACIENTE
 }

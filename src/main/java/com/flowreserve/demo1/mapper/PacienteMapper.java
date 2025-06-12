@@ -17,8 +17,8 @@ public class PacienteMapper {
                 .build();
     }
 
-    public PacienteResponseDTO toPacienteResponseDTO(Paciente paciente){
-        if(paciente == null) return null;
+    public PacienteResponseDTO toPacienteResponseDTO(Paciente paciente) {
+        if (paciente == null) return null;
         return PacienteResponseDTO.builder()
                 .id(paciente.getId())
                 .nombre(paciente.getNombre())

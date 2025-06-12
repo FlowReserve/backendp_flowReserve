@@ -1,4 +1,5 @@
 package com.flowreserve.demo1.dto.Request;
+import com.flowreserve.demo1.dto.Paciente.PacienteResponseDTO;
 import lombok.*;
 
 @Getter
@@ -11,4 +12,8 @@ public class RequestResponseDTO {
     private String codigo;
     private String state;
     private String nombreArchivoZip;
+
+    private PacienteResponseDTO pacienteResponseDTO;
+
+    //DTO MEDICO Y PACIENTE
 }

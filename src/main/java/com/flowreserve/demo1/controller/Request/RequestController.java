@@ -2,6 +2,8 @@ package com.flowreserve.demo1.controller.Request;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flowreserve.demo1.dto.Request.RequestDTO;
+import com.flowreserve.demo1.dto.Request.RequestResponseDTO;
+import com.flowreserve.demo1.mapper.RequestMapper;
 import com.flowreserve.demo1.model.Request.Request;
 import com.flowreserve.demo1.service.Request.RequestService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,8 +31,8 @@ public class RequestController
 
     @Autowired
     private RequestService requestService;
-
-
+    @Autowired
+    private  RequestMapper requestMapper;
     @Autowired
     private ObjectMapper objectMapper;
 
@@ -56,9 +58,13 @@ public class RequestController
     }
     //@PreAuthorize("hasAnyRole('DOCTOR')")
     @GetMapping("/mis-solicitudes")
-    public  ResponseEntity<Page<Request>> getMyRequestPatient(@RequestParam long pacienteId,Pageable pageable){
+    public  ResponseEntity<Page<RequestResponseDTO>> getMyRequestPatient(@RequestParam long pacienteId, Pageable pageable){
         Page<Request> requests = requestService.listarRequestByPaciente(pacienteId,pageable);
-        return  ResponseEntity.ok(requests);
+
+        // Mapear cada Request a RequestResponseDTO
+        Page<RequestResponseDTO> dtoPage = requests.map(requestMapper::toRequestResponseDTO);
+
+        return  ResponseEntity.ok(dtoPage);
     }
         //ordenar por medico y estado dto
     //@PreAuthorize("hasAnyRole('ADMIN', 'DEVELOPER')")

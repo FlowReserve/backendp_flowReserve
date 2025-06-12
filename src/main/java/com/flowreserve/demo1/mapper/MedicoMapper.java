@@ -2,7 +2,10 @@ package com.flowreserve.demo1.mapper;
 
 import com.flowreserve.demo1.dto.Medico.MedicoDTO;
 import com.flowreserve.demo1.dto.Medico.MedicoProfileDTO;
+import com.flowreserve.demo1.dto.Medico.MedicoResponseDTO;
+import com.flowreserve.demo1.dto.Paciente.PacienteResponseDTO;
 import com.flowreserve.demo1.model.Medico.Medico;
+import com.flowreserve.demo1.model.Paciente.Paciente;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;

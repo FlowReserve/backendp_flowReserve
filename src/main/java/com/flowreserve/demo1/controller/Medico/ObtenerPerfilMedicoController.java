@@ -10,6 +10,8 @@ import com.flowreserve.demo1.service.Medico.ObtenerMedicoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,5 +35,18 @@ public class ObtenerPerfilMedicoController {
         Medico medico = obtenerMedicoService.obtenerMedicoPorId(id);
         MedicoProfileDTO medicoProfileDTO = medicoMapper.toMedicoProfileDTO(medico);
         return ApiResponseDTO.success("Médico encontrado con éxito", medicoProfileDTO, HttpStatus.OK);
+    }
+
+    /**
+     * Endpoint que muestra la informacion de perfil de un médico autheticado
+     * @return
+     */
+    @GetMapping("/medico")
+    public ResponseEntity<ApiResponseDTO<MedicoProfileDTO>> obtenerPerfilMedico(){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        Medico medico = obtenerMedicoService.obtenerMedicoPorMail(auth.getName());
+        MedicoProfileDTO medicoProfileDTO = medicoMapper.toMedicoProfileDTO(medico);
+        return ApiResponseDTO.success("Perfil encontrado con éxito", medicoProfileDTO, HttpStatus.OK);
     }
 }

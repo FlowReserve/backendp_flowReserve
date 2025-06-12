@@ -27,9 +27,16 @@ public class ObtenerMedicoService {
                 () -> new EntityNotFoundException("Médico con ID " + id + " no fue encontrado en la Base de datos"));
     }
 
+    public Medico obtenerMedicoPorMail(String email){
+        return medicoRepository.findByEmail(email).orElseThrow(
+                () -> new EntityNotFoundException("Medico con mail:" + email + " no ha sido encontrado")
+        );
+    }
+
     public Long obtenerIdMedicoPorMail(String email){
         return medicoRepository.findIdByEmail(email).orElseThrow(
                 () -> new EntityNotFoundException("Medico con email: " + email + " no ha sido encontrado"));
 
     }
+
 }

@@ -21,7 +21,7 @@ public class CustomExceptionHandler {
     }
     @ExceptionHandler(DuplicateKeyException.class)
     public ResponseEntity<ApiResponseDTO<Object>> handleDuplicateKey(DuplicateKeyException e){
-        return ApiResponseDTO.error(e.getMessage() ,409, HttpStatus.CONFLICT);
+        return ApiResponseDTO.error(e.getMessage() , HttpStatus.CONFLICT);
     }
 
 }

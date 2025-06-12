@@ -37,8 +37,6 @@ public class Request {
     @OneToOne(mappedBy = "request", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private Response response;
 
-
-
     private LocalDateTime date;
 
     private String state;
@@ -53,88 +51,6 @@ public class Request {
 
     private String codigo;
 
-
-    // Getters y setters
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Medico getMedico() {
-        return medico;
-    }
-
-    public void setMedico(Medico medico) {
-        this.medico = medico;
-    }
-
-    public Paciente getPaciente() {
-        return paciente;
-    }
-
-    public void setPaciente(Paciente paciente) {
-        this.paciente = paciente;
-    }
-
-    public LocalDateTime getDate() {
-        return date;
-    }
-
-    public void setDate(LocalDateTime date) {
-        this.date = date;
-    }
-
-    public String getState() {
-        return state;
-    }
-
-    public void setState(String state) {
-        this.state = state;
-    }
-
-    public String getPressureA() {
-        return pressureA;
-    }
-
-    public void setPressureA(String pressureA) {
-        this.pressureA = pressureA;
-    }
-
-    public String getPressureB() {
-        return pressureB;
-    }
-
-    public void setPressureB(String pressureB) {
-        this.pressureB = pressureB;
-    }
-
-    public String getNombreArchivoZip() {
-        return nombreArchivoZip;
-    }
-
-    public void setNombreArchivoZip(String nombreArchivoZip) {
-        this.nombreArchivoZip = nombreArchivoZip;
-    }
-
-    public String getCampoComentarios() {
-        return campoComentarios;
-    }
-
-    public void setCampoComentarios(String campoComentarios) {
-        this.campoComentarios = campoComentarios;
-    }
-
-    public String getCodigo() {
-        return codigo;
-    }
-
-    public void setCodigo(String codigo) {
-        this.codigo = codigo;
-    }
 
     @PrePersist
     public void generarCodigo() {

@@ -8,12 +8,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class PacienteMapper {
 
-    public PacienteDTO toPacienteDTO(Paciente paciente){
-        if(paciente == null) return null;
-        return PacienteDTO.builder()
-                .nombre(paciente.getNombre())
-                .apellido(paciente.getApellido())
-                .codigoNHC(paciente.getNhc())
+    public Paciente toPacienteModel(PacienteDTO pacienteDTO){
+        if(pacienteDTO == null) return null;
+        return Paciente.builder()
+                .nombre(pacienteDTO.getNombre())
+                .apellido(pacienteDTO.getApellido())
+                .nhc(pacienteDTO.getCodigoNHC())
                 .build();
     }
 

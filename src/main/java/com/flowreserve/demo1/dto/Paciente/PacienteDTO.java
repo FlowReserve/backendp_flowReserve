@@ -17,6 +17,6 @@ public class PacienteDTO {
     @NotNull(message = "El código CNHC es obligatorio")
     private String codigoNHC;
 
-    private Long codigoAsociadoAcnhc;
+
 
 }

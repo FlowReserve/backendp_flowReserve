@@ -6,14 +6,16 @@ import java.util.HashSet;
 import java.util.Set;
 
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 @Setter
 @Getter
-@Builder
+@SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
 
 @Entity
+
 @Inheritance(strategy = InheritanceType.JOINED) // o SINGLE_TABLE o TABLE_PER_CLASS según lo que prefieras
 public class User {
     @Id

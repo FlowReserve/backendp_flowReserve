@@ -44,11 +44,11 @@ public class PacienteController {
 
     //@PreAuthorize("hasRole('DOCTOR')")
     @GetMapping("/mis-pacientes")
-    public ResponseEntity<Page<Paciente>> listarPacientesDelMedicoAutenticado(
+    public ResponseEntity<ApiResponseDTO<Page<Paciente>>> listarPacientesDelMedicoAutenticado(
             @PageableDefault(size = 10, sort = "apellido") Pageable pageable) {
 
         Page<Paciente> pacientes = pacienteService.obtenerPacientesPorMedicoAutenticado(pageable);
-        return ResponseEntity.ok(pacientes);
+        return ApiResponseDTO.success("Los pacientes han sido creados con exito",HttpStatus.OK.value(),pacientes,HttpStatus.OK);
     }
 
     /**

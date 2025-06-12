@@ -1,5 +1,6 @@
 package com.flowreserve.demo1.model.Response;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.flowreserve.demo1.model.Request.Request;
 import jakarta.persistence.*;
 
@@ -14,6 +15,7 @@ public class Response {
 
     @OneToOne
     @MapsId
+    @JsonIgnore
     @JoinColumn(name = "request_id")
     private Request request;
 

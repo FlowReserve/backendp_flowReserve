@@ -54,6 +54,7 @@ public class RequestController
         Page<Request> requests = requestService.listarRequestsByMedico(pageable);
         return ResponseEntity.ok(requests);
     }
+    //@PreAuthorize("hasAnyRole('DOCTOR')")
     @GetMapping("/mis-solicitudes")
     public  ResponseEntity<Page<Request>> getMyRequestPatient(@RequestParam long pacienteId,Pageable pageable){
         Page<Request> requests = requestService.listarRequestByPaciente(pacienteId,pageable);

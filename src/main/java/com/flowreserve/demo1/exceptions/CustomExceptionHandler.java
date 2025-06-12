@@ -2,6 +2,7 @@ package com.flowreserve.demo1.exceptions;
 
 import com.flowreserve.demo1.dto.global.ApiResponseDTO;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -18,4 +19,9 @@ public class CustomExceptionHandler {
     public ResponseEntity<ApiResponseDTO<Object>> handleEntityNotfound(EntityNotFoundException e){
         return ApiResponseDTO.error(e.getMessage(), HttpStatus.NOT_FOUND);
     }
+    @ExceptionHandler(DuplicateKeyException.class)
+    public ResponseEntity<ApiResponseDTO<Object>> handleDuplicateKey(DuplicateKeyException e){
+        return ApiResponseDTO.error(e.getMessage() ,409, HttpStatus.CONFLICT);
+    }
+
 }

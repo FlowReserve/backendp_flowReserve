@@ -9,11 +9,11 @@ import java.time.LocalDateTime;
 public class Response {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
 
-    @ManyToOne
+    @OneToOne
+    @MapsId
     @JoinColumn(name = "request_id")
     private Request request;
 
@@ -29,9 +29,6 @@ public class Response {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public Request getRequest() {
         return request;

@@ -2,7 +2,13 @@ package com.flowreserve.demo1.dto.Hospital;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.*;
 
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class HospitalDTO {
 
     public String getNombreHospital() {

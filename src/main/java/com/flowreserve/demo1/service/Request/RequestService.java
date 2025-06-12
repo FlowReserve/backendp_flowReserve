@@ -1,6 +1,7 @@
 package com.flowreserve.demo1.service.Request;
 
 import com.flowreserve.demo1.dto.Request.RequestDTO;
+import com.flowreserve.demo1.mapper.RequestMapper;
 import com.flowreserve.demo1.model.Medico.Medico;
 import com.flowreserve.demo1.model.Paciente.Paciente;
 import com.flowreserve.demo1.model.Request.Request;
@@ -10,6 +11,7 @@ import com.flowreserve.demo1.repository.Request.RequestRepository;
 import com.flowreserve.demo1.service.Medico.MedicoService;
 import com.flowreserve.demo1.service.Paciente.PacienteService;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -26,24 +28,18 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
+@RequiredArgsConstructor
 
 @Service
 public class RequestService {
 
-    @Autowired
-    private MedicoService medicoService;
 
-    @Autowired
-    private PacienteService pacienteService;
-
-    @Autowired
-    private RequestRepository requestRepository;
-
-    @Autowired
-    private MedicoRepository medicoRepository;
-
-    @Autowired
-    private PacienteRepository pacienteRepository;
+    private final MedicoService medicoService;
+    private final PacienteService pacienteService;
+    private final RequestRepository requestRepository;
+    private final MedicoRepository medicoRepository;
+    private final PacienteRepository pacienteRepository;
+    private final RequestMapper requestMapper;
 
 
     @Value("${ROOT_PATH}")
@@ -55,7 +51,7 @@ public class RequestService {
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String emailMedico = auth.getName();
-
+        request = requestMapper.toRequestModel(dto);
         Medico medico = medicoService.findByEmail(emailMedico);
         request.setMedico(medico);
 
@@ -65,9 +61,8 @@ public class RequestService {
         // Fecha y estado
         request.setDate(LocalDateTime.now());
         request.setState("PENDIENTE");
-        request.setPressureA(dto.getPressureA());
-        request.setPressureB(dto.getPressureB());
-        request.setCampoComentarios(dto.getComentarios());
+
+
 
         // Guardar el request para generar el código (si es generado en la BD)
         if (request.getCodigo() == null) {

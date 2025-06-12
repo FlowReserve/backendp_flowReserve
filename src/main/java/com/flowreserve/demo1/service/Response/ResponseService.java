@@ -85,8 +85,11 @@ public class ResponseService {
 
 
 
-    public Resource obtenerArchivoDelMedico(Long responseId) throws IOException {
-        Response response = responseRepository.findById(responseId)
+
+
+
+    public Resource obtenerArchivoDelMedico(Long requestId) throws IOException {
+        Response response = responseRepository.findById(requestId)
                 .orElseThrow(() -> new RuntimeException("Respuesta no encontrada"));
 
 

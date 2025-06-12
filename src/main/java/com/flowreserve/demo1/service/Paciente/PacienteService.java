@@ -1,9 +1,11 @@
 package com.flowreserve.demo1.service.Paciente;
 
 import com.flowreserve.demo1.dto.Paciente.PacienteDTO;
+import com.flowreserve.demo1.mapper.PacienteMapper;
 import com.flowreserve.demo1.repository.Medico.MedicoRepository;
 import com.flowreserve.demo1.service.Medico.MedicoService;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import com.flowreserve.demo1.model.Medico.Medico;
@@ -15,22 +17,16 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
-
+@RequiredArgsConstructor
 public class PacienteService {
     private final PacienteRepository pacienteRepository;
 
-    @Autowired
-    public PacienteService(PacienteRepository pacienteRepository) {
-        this.pacienteRepository = pacienteRepository;
-    }
 
-    @Autowired
-    private MedicoService medicoService;
+    private final MedicoService medicoService;
 
-    @Autowired
-    private MedicoRepository medicoRepository;
+    private  final MedicoRepository medicoRepository;
 
-
+  private final PacienteMapper pacienteMapper;
 
 
     public Paciente crearPaciente(PacienteDTO pacienteDTO) {
@@ -42,12 +38,15 @@ public class PacienteService {
         Medico medico = medicoService.findByEmail(emailMedico); // Usa el método correcto del servicio
         Long idMedico = medico.getId(); // Ya puedes obtener el ID si lo necesitas
 
+//
+//        Paciente paciente = new Paciente();
+//        paciente.setNombre(pacienteDTO.getNombre());
+//        paciente.setApellido(pacienteDTO.getApellido());
+//        paciente.setNhc(pacienteDTO.getCodigoNHC());
+//        paciente.setMedico(medico);
 
-        Paciente paciente = new Paciente();
-        paciente.setNombre(pacienteDTO.getNombre());
-        paciente.setApellido(pacienteDTO.getApellido());
-        paciente.setNhc(pacienteDTO.getCodigoNHC());
-        paciente.setMedico(medico);
+         Paciente paciente =  pacienteMapper.toPacienteModel(pacienteDTO);
+         paciente.setMedico(medico);
         paciente = pacienteRepository.save(paciente);
 
         return pacienteRepository.save(paciente);

@@ -5,10 +5,17 @@ import com.flowreserve.demo1.model.Paciente.Paciente;
 import com.flowreserve.demo1.model.Request.Request;
 import com.flowreserve.demo1.model.User.User;
 import jakarta.persistence.*;
+import lombok.Builder;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@SuperBuilder
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 public class Medico extends User {
 

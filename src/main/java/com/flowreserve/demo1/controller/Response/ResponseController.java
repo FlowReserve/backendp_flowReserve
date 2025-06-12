@@ -40,10 +40,10 @@ public class ResponseController {
         }
     }
 
-    @GetMapping("/medico/descargar/{responseId}")
-    public ResponseEntity<Resource> descargarArchivo(@PathVariable Long responseId) throws IOException {
+    @GetMapping("/medico/descargar/{requestId}")
+    public ResponseEntity<Resource> descargarArchivo(@PathVariable Long requestId) throws IOException {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        Resource archivo = responseService.obtenerArchivoDelMedico(responseId);
+        Resource archivo = responseService.obtenerArchivoDelMedico(requestId);
 
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)

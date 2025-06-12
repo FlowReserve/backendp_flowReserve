@@ -30,6 +30,7 @@ public class RequestMapper {
                 .id(request.getId())
                 .codigo(request.getCodigo())
                 .state(request.getState())
+                .date(request.getDate())
                 .nombreArchivoZip(request.getNombreArchivoZip())
                 .paciente(pacienteMapper.toPacienteResponseDTO(request.getPaciente()))
                 .build();

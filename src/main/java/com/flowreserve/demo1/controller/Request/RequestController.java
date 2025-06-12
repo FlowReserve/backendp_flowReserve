@@ -3,12 +3,15 @@ package com.flowreserve.demo1.controller.Request;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flowreserve.demo1.dto.Request.RequestDTO;
 import com.flowreserve.demo1.dto.Request.RequestResponseDTO;
+import com.flowreserve.demo1.dto.global.ApiResponseDTO;
 import com.flowreserve.demo1.mapper.RequestMapper;
 import com.flowreserve.demo1.model.Request.Request;
 import com.flowreserve.demo1.service.Request.RequestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -68,11 +71,31 @@ public class RequestController
     }
         //ordenar por medico y estado dto
     //@PreAuthorize("hasAnyRole('ADMIN', 'DEVELOPER')")
-    @GetMapping("/listarRequestAdmin")
-    public ResponseEntity<Page<Request>> listarTodasLasRequests(Pageable pageable) {
-        Page<Request> requests = requestService.ListarTodasLasRequests(pageable);
-        return ResponseEntity.ok(requests);
-    }
+        @GetMapping("/listarRequestAdmin")
+        public ResponseEntity<ApiResponseDTO<Page<RequestResponseDTO>>> listarTodasLasRequests(
+                @RequestParam(defaultValue = "0") int page,
+                @RequestParam(defaultValue = "10") int size,
+                @RequestParam(defaultValue = "id") String sortBy,
+                @RequestParam(defaultValue = "asc") String sortDir) {
+            // Limitar tamaño de página a 25
+            int pageSize = Math.min(size, 25);
+
+            Sort sort = sortDir.equalsIgnoreCase("desc")
+                    ? Sort.by(sortBy).descending()
+                    : Sort.by(sortBy).ascending();
+
+            Pageable pageable = PageRequest.of(page, pageSize, sort);
+
+            Page<Request> requests = requestService.ListarTodasLasRequests(pageable);
+            Page<RequestResponseDTO>  pageRequestDTO = requests.map(requestMapper::toRequestResponseDTO);
+            return ApiResponseDTO.success("Listado de consultas encontrado", pageRequestDTO, HttpStatus.OK);
+        }
+
+//    @GetMapping("/listarRequestAdmin")
+//    public ResponseEntity<Page<Request>> listarTodasLasRequests(Pageable pageable) {
+//        Page<Request> requests = requestService.ListarTodasLasRequests(pageable);
+//        return ResponseEntity.ok(requests);
+//    }
 
 
 

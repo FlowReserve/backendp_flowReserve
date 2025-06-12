@@ -37,8 +37,6 @@ public class Request {
     @OneToOne(mappedBy = "request", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private Response response;
 
-
-
     private LocalDateTime date;
 
     @Enumerated(EnumType.STRING)
@@ -53,10 +51,6 @@ public class Request {
     private String campoComentarios;
 
     private String codigo;
-
-
-    // Getters y setters
-
 
 
     @PrePersist

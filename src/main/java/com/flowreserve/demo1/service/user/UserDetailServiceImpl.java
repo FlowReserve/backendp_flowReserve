@@ -1,5 +1,6 @@
 package com.flowreserve.demo1.service.user;
 
+import com.flowreserve.demo1.dto.User.UserResponseDTO;
 import com.flowreserve.demo1.dto.authentication.AuthLoginRequest;
 import com.flowreserve.demo1.dto.authentication.AuthReponse;
 import com.flowreserve.demo1.model.User.User;
@@ -16,7 +17,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
+import com.flowreserve.demo1.mapper.UserMapper;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +30,9 @@ public class UserDetailServiceImpl implements UserDetailsService {
     private JWTUtils jwtUtils;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private UserMapper userMapper;
+
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -63,21 +67,29 @@ public class UserDetailServiceImpl implements UserDetailsService {
 
 
     public AuthReponse loginUser(AuthLoginRequest authLoginRequest) {
-        String username = authLoginRequest.username();
+        String email = authLoginRequest.email();
         String password = authLoginRequest.password();
 
-        Authentication authentication = this.authenticate(username, password);
+        Authentication authentication = this.authenticate(email, password);
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         String accesToken = jwtUtils.createToken(authentication);
 
-        AuthReponse authReponse = new AuthReponse(username, "User loged successfuly", accesToken, true);
+        User usuario = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
+
+        // 🧰 Mapear a DTO
+        UserResponseDTO userDto = userMapper.toUserDTO(usuario);
+
+
+
+        AuthReponse authReponse = new AuthReponse(userDto, "User loged successfuly", accesToken, true);
         return authReponse;
 
     }
 
-    public Authentication authenticate(String username, String password) {
-        UserDetails userDetails = this.loadUserByUsername(username);
+    public Authentication authenticate(String email, String password) {
+        UserDetails userDetails = this.loadUserByUsername(email);
 
 
         if (userDetails == null) {
@@ -89,7 +101,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
 
         }
 
-        return new UsernamePasswordAuthenticationToken(username,userDetails.getPassword(),userDetails.getAuthorities());
+        return new UsernamePasswordAuthenticationToken(email,userDetails.getPassword(),userDetails.getAuthorities());
 
     }
 

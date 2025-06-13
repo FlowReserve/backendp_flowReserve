@@ -139,4 +139,19 @@ public class RequestService {
     public Page<Request> ListarTodasLasRequests(Pageable pageable) {
         return requestRepository.findAll(pageable);
     }
+
+   public void cambiarEstado (Long requestID, EstadoSolicitudEnum nuevoEstado){
+
+        Request request = requestRepository.findById(requestID)
+                .orElseThrow(() -> new RuntimeException("Request no encontrada"));
+
+
+       if (request.getState() == EstadoSolicitudEnum.COMPLETADA) {
+           throw new IllegalStateException("No se puede cambiar una solicitud completada.");
+       }
+
+       request.setState(nuevoEstado);
+       requestRepository.save(request);
+   }
+
 }

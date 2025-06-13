@@ -39,7 +39,7 @@ public class PacienteController {
 
 
     //devolver dto y no un ?
-//@PreAuthorize("hasRole('DOCTOR')")
+    @PreAuthorize("hasRole('DOCTOR')")
     @PostMapping("/new")
     public ResponseEntity<?> crearPaciente(@Valid @RequestBody PacienteDTO pacienteDTO) {
         pacienteService.crearPaciente(pacienteDTO);
@@ -47,7 +47,7 @@ public class PacienteController {
                 .body(Map.of("mensaje", "Paciente creado correctamente"));
     }
 
-    //@PreAuthorize("hasRole('DOCTOR')")
+    @PreAuthorize("hasRole('DOCTOR')")
     @GetMapping("/mis-pacientes")
     public ResponseEntity<ApiResponseDTO<Page<PacienteResponseDTO>>> listarPacientesDelMedicoAutenticado(
             @RequestParam(defaultValue = "0") int page,
@@ -75,6 +75,7 @@ public class PacienteController {
      * @param idPaciente identificador del paciente sobre el que se quiere realizar la búsqueda
      * @return APIResponse con la información del paciente sobre el que se ha realizado la consulta.
      */
+    @PreAuthorize("hasRole('DOCTOR')")
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponseDTO<PacienteResponseDTO>> obtenerPacienteDeMedicoAutenticado(@PathVariable("id") Long idPaciente){
         //Comprueba datos del usuario authenticado

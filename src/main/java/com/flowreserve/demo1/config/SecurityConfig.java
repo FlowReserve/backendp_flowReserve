@@ -2,6 +2,7 @@ package com.flowreserve.demo1.config;
 import com.flowreserve.demo1.config.filter.JwtTokenValidator;
 import com.flowreserve.demo1.service.user.UserDetailServiceImpl;
 import com.flowreserve.demo1.utils.JWTUtils;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,9 +16,11 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
@@ -46,13 +49,16 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/hospital/**").permitAll()
                         .requestMatchers("/api/v1/invitaciones/**").permitAll()
                         .requestMatchers("/api/v1/medicos/**").permitAll()
-                        .requestMatchers("/api/v1/pacientes/**").permitAll()
-
+                        .requestMatchers("/api/v1/pacientes/**").hasRole("DOCTOR")
                         .requestMatchers(HttpMethod.POST,"/Auth/**").permitAll()
-
+                        .requestMatchers("/api/v1/solicitudes/**").authenticated() //
                         //.anyRequest().authenticated()
                         .anyRequest().permitAll()
                 )
+                        .exceptionHandling(exception -> exception
+                        .accessDeniedHandler(accessDeniedHandler())
+                        .authenticationEntryPoint(authenticationEntryPoint())
+                        )
                 .addFilterBefore(new JwtTokenValidator(jwtUtils), BasicAuthenticationFilter.class);
 
 
@@ -94,6 +100,28 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
+    @Bean
+    public AccessDeniedHandler accessDeniedHandler() {
+        return (request, response, accessDeniedException) -> {
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            response.setContentType("application/json");
+            response.getWriter().write("{\"error\": \"Acceso denegado: no tiene permisos suficientes.\"}");
+        };
+    }
+
+    @Bean
+    public AuthenticationEntryPoint authenticationEntryPoint() {
+        return (request, response, authException) -> {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json");
+            response.getWriter().write("{\"error\": \"No autenticado: debe iniciar sesión.\"}");
+        };
+    }
+
+
+
+
 
 //    public static void main(String[] args) {
 //        System.out.println(new BCryptPasswordEncoder().encode("12345"));

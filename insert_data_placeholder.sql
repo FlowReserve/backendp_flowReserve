@@ -84,9 +84,9 @@ INSERT INTO paciente(id, apellido, nhc, nombre, medico_id) VALUES
 
 
 INSERT INTO invitaciones (codigo, hospital_id, usada) VALUES
-('INV-025F225F ', 1, 0),
-('INV-035G224F ', 1, 0),
-('INV-045L223F ', 2, 0);
+('INV-025F225F', 1, 0),
+('INV-035G224F', 1, 0),
+('INV-045L223F', 2, 0);
 
 
 

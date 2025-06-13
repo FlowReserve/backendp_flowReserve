@@ -97,7 +97,14 @@ public class RequestController
 //        return ResponseEntity.ok(requests);
 //    }
 
+    //@PreAuthorize("hasAnyRole('ADMIN', 'DEVELOPER')")
+    @PutMapping("/{id}/estado")
+    public ResponseEntity<?> cambiarEstadoRequest(
+            @PathVariable Long id,
+            @RequestBody  RequestResponseDTO requestDTO) {
 
-
+        requestService.cambiarEstado(id, requestDTO.getState());
+        return ResponseEntity.ok("Estado actualizado correctamente.");
+    }
 
 }

@@ -78,7 +78,7 @@ public class ResponseService {
         Response respuesta = new Response();
         respuesta.setRequest(request);
         respuesta.setNombreArchivoRespuesta(rutaArchivo.toString());
-        respuesta.setRutaCompletaArchivo(rutaRelativa.toString().toString());
+        respuesta.setRutaCompletaArchivo(rutaRelativa.toString());
         respuesta.setFechaCreacion(LocalDateTime.now());
 
         responseRepository.save(respuesta);

@@ -4,6 +4,8 @@ import com.flowreserve.demo1.dto.Medico.MedicoDTO;
 import com.flowreserve.demo1.mapper.MedicoMapper;
 import com.flowreserve.demo1.model.Invitacion.Invitacion;
 import com.flowreserve.demo1.model.Medico.Medico;
+import com.flowreserve.demo1.model.role.RoleEnum;
+import com.flowreserve.demo1.model.role.RoleModel;
 import com.flowreserve.demo1.repository.Invitacion.InvitacionRepository;
 import com.flowreserve.demo1.repository.Medico.MedicoRepository;
 import com.flowreserve.demo1.repository.RoleRepository;
@@ -39,13 +41,12 @@ public Medico crearMedicoDesdeInvitacion(MedicoDTO medicoDTO) {
     if (invitacion.isUsada()) {
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La invitación ya fue usada");
     }
+    RoleModel rolMedico = roleRepo.findByRoleEnum(RoleEnum.DOCTOR)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Rol MEDICO no encontrado"));    //Role roleMedico = roleRepo.findByName("ROLE_MEDICO")
 
-    //Role roleMedico = roleRepo.findByName("ROLE_MEDICO")
-     //       .orElseThrow(() -> entity not found ("Rol no encontrado"));
-
-   // medico.getRoles().add(roleMedico);
 
     Medico medico = medicoMapper.toMedicoModel(medicoDTO);
+    medico.getRoleModelSet().add(rolMedico);
     medico.setHospital(invitacion.getHospital());
 
     medico = medicoRepo.save(medico);

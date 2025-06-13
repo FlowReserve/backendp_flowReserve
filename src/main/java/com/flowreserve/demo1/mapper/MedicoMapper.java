@@ -10,6 +10,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 @RequiredArgsConstructor
 @Component
 public class MedicoMapper {
@@ -22,12 +26,20 @@ public class MedicoMapper {
      */
     public Medico toMedicoModel(MedicoDTO medicoDTO) {
         if (medicoDTO == null) return null;
-        return Medico.builder()
+
+
+
+
+        Medico medico = Medico.builder()
                 .nombre(medicoDTO.getNombre())
                 .apellido(medicoDTO.getApellido())
                 .email(medicoDTO.getEmail())
                 .password(passwordEncoder.encode(medicoDTO.getContraseña()))
                 .build();
+
+        medico.setRoleModelSet(new HashSet<>());  // Inicializas el set aquí
+
+        return medico;
     }
 
 
@@ -37,10 +49,21 @@ public class MedicoMapper {
 
     public MedicoProfileDTO toMedicoProfileDTO(Medico medico){
         if(medico == null) return null;
+
+        Set<String> roles = medico.getRoleModelSet().stream()
+                .map(role -> role.getRoleEnum().name()) // o el campo que quieras mostrar
+                .collect(Collectors.toSet());
+
+
+
+
+
+
         return MedicoProfileDTO.builder()
                 .email(medico.getEmail())
                 .apellido(medico.getApellido())
                 .nombre(medico.getNombre())
+                .roles(roles)
                 .build();
     }
 

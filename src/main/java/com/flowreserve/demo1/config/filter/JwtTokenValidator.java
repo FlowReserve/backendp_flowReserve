@@ -37,25 +37,37 @@ public class JwtTokenValidator extends OncePerRequestFilter {
                                     @NonNull HttpServletResponse response,
                                     @NonNull FilterChain filterChain) throws ServletException, IOException {
 
+        String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 
-        String jwtToken = request.getHeader(HttpHeaders.AUTHORIZATION);
-
-        if (jwtToken != null) {
-            jwtToken = jwtToken.substring(7);
-           DecodedJWT decodedJWT =  jwtUtils.validateToken(jwtToken);
-
-           String username = jwtUtils.extractUsername(decodedJWT);
-           String stringAuthorities = jwtUtils.getSpecificClaim(decodedJWT,"authorities").asString();
-
-            Collection<? extends GrantedAuthority> authorities = authorities = AuthorityUtils.commaSeparatedStringToAuthorityList(stringAuthorities);
-
-            SecurityContext context = SecurityContextHolder.getContext();
-            Authentication authentication = new UsernamePasswordAuthenticationToken(username, null ,authorities);
-            context.setAuthentication(authentication);
-            SecurityContextHolder.setContext(context);
-
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            // No hay token o no empieza con Bearer, sigue sin autenticar
+            filterChain.doFilter(request, response);
+            return;
         }
-        filterChain.doFilter(request, response);
 
+        String jwtToken = authHeader.substring(7); // cortamos "Bearer "
+
+        try {
+            DecodedJWT decodedJWT = jwtUtils.validateToken(jwtToken);
+
+            String username = jwtUtils.extractUsername(decodedJWT);
+            String stringAuthorities = jwtUtils.getSpecificClaim(decodedJWT, "authorities").asString();
+
+            Collection<? extends GrantedAuthority> authorities = AuthorityUtils.commaSeparatedStringToAuthorityList(stringAuthorities);
+
+            Authentication authentication = new UsernamePasswordAuthenticationToken(username, null, authorities);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        } catch (Exception e) {
+            // Token inválido o expirado, limpiamos contexto y respondemos error 401 JSON
+            SecurityContextHolder.clearContext();
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json");
+            response.getWriter().write("{\"error\": \"Token inválido o expirado\"}");
+            return; // No seguir con el filtro
+        }
+
+        filterChain.doFilter(request, response);
     }
+
 }

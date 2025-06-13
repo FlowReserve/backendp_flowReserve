@@ -39,6 +39,7 @@ public class RequestController
     @Autowired
     private ObjectMapper objectMapper;
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR')")
     @PostMapping(value = "/new", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> crearRequestConArchivos(
             @RequestPart("json") String requestJson,
@@ -53,13 +54,14 @@ public class RequestController
                     .body("Error al crear la request: " + e.getMessage());
         }
     }
-  //admin
+    @PreAuthorize("hasAnyRole('ADMIN', 'DEVELOPER')")
     @GetMapping("/listarRequestsMedico")
     public ResponseEntity<Page<Request>> getMyRequests(Pageable pageable) {
         Page<Request> requests = requestService.listarRequestsByMedico(pageable);
         return ResponseEntity.ok(requests);
     }
-    //@PreAuthorize("hasAnyRole('DOCTOR')")
+
+    @PreAuthorize("hasAnyRole('DOCTOR')")
     @GetMapping("/mis-solicitudes")
     public  ResponseEntity<Page<RequestResponseDTO>> getMyRequestPatient(@RequestParam long pacienteId, Pageable pageable){
         Page<Request> requests = requestService.listarRequestByPaciente(pacienteId,pageable);
@@ -70,7 +72,7 @@ public class RequestController
         return  ResponseEntity.ok(dtoPage);
     }
         //ordenar por medico y estado dto
-    //@PreAuthorize("hasAnyRole('ADMIN', 'DEVELOPER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DEVELOPER')")
         @GetMapping("/listarRequestAdmin")
         public ResponseEntity<ApiResponseDTO<Page<RequestResponseDTO>>> listarTodasLasRequests(
                 @RequestParam(defaultValue = "0") int page,
@@ -97,7 +99,7 @@ public class RequestController
 //        return ResponseEntity.ok(requests);
 //    }
 
-    //@PreAuthorize("hasAnyRole('ADMIN', 'DEVELOPER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DEVELOPER')")
     @PutMapping("/{id}/estado")
     public ResponseEntity<?> cambiarEstadoRequest(
             @PathVariable Long id,

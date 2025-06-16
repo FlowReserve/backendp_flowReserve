@@ -88,8 +88,8 @@ public class RequestService {
             request.setNombreArchivoZip(rutaRelativa.toString());
 
             // Crear archivo .txt con presiones y comentarios
-            String contenidoTxt = "Presión A: " + dto.getPressureA() + "\n"
-                    + "Presión B: " + dto.getPressureB() + "\n"
+            String contenidoTxt = "Presión Sistólica: " + dto.getPresionSistolica() + "\n"
+                    + "Presión diastólica: " + dto.getPresionDiastolica() + "\n"
                     + "Comentarios: " + dto.getComentarios();
 
             String nombreArchivoTxt = "info_" + codigoRequest + ".txt";

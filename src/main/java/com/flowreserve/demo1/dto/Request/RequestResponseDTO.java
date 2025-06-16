@@ -18,6 +18,8 @@ public class RequestResponseDTO {
     private String nombreArchivoZip;
     private LocalDateTime date;
     private PacienteResponseDTO paciente;
+    private String comentarios;
+    private int presionSistolica;
+    private int presionDiastolica;
 
-    //DTO MEDICO Y PACIENTE
 }

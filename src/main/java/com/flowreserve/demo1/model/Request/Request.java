@@ -42,13 +42,13 @@ public class Request {
     @Enumerated(EnumType.STRING)
     private EstadoSolicitudEnum state;
 
-    private String pressureA;
-
-    private String pressureB;
+    private int presionSistolica;
+    
+    private int presionDiastolica;
 
     private String nombreArchivoZip;
 
-    private String campoComentarios;
+    private String comentarios;
 
     private String codigo;
 

@@ -14,9 +14,6 @@ INSERT INTO roles_test (id, role_name) VALUES
 (5, 'VISUALIZER'),
 (6, 'ADMIN');
 
-
-
-
 INSERT INTO roles_permissions_test (role_id, permission_id) VALUES
 (1,4),
 (2,4),
@@ -31,22 +28,16 @@ INSERT INTO roles_permissions_test (role_id, permission_id) VALUES
 (6,3),
 (6,4);
 
-
-
 -- CREA USUARIOS EN LA BASE DE DATOS
-INSERT INTO user (id, credential_no_expired, account_no_expired, account_no_locked, nombre, is_enabled, password) VALUES
-(1, TRUE, TRUE, TRUE, 'test@test.com', TRUE, '$2a$10$EaOIPn9whrM5QV/BiIL9Z.d./GcGalcpOE/WGOLSL.tUjuQ/ek9JG'), -- admin 12345
-(2, TRUE, TRUE, TRUE, 'martin.gago@flowreserve.es', TRUE, '$2a$10$EaOIPn9whrM5QV/BiIL9Z.d./GcGalcpOE/WGOLSL.tUjuQ/ek9JG'), -- admin 12345
-(3, TRUE, TRUE, TRUE, 'elias@flowreserve.es', TRUE, '$2a$10$EaOIPn9whrM5QV/BiIL9Z.d./GcGalcpOE/WGOLSL.tUjuQ/ek9JG'), -- admin 12345
-(4, TRUE, TRUE, TRUE, 'user@test.com', TRUE, '$2a$10$EaOIPn9whrM5QV/BiIL9Z.d./GcGalcpOE/WGOLSL.tUjuQ/ek9JG'); -- user 12345
-
+INSERT INTO user (id, account_no_expired, account_no_locked, apellido, credential_no_expired, email, is_enabled, nombre, password) VALUES
+(1, TRUE, TRUE, "Rodriguez Otero",TRUE, 'admin@test.com', TRUE, "Alberto",'$2a$10$EaOIPn9whrM5QV/BiIL9Z.d./GcGalcpOE/WGOLSL.tUjuQ/ek9JG'), -- 12345
+(2, TRUE, TRUE, "Domingo Ramos", TRUE, 'user@test.com', TRUE, "Francisco", '$2a$10$EaOIPn9whrM5QV/BiIL9Z.d./GcGalcpOE/WGOLSL.tUjuQ/ek9JG'); -- 12345
 
 -- ASIGNA ROLES A LOS USUARIOS
 INSERT INTO user_roles_test (user_id, role_id) VALUES
-(1,4),
-(2,3),
-(3,3),
-(4,2);
+(1,6),
+(2,4);
+
 
 INSERT INTO hospital (id, codigo, nombre) VALUES 
 (1, 123456, "HOSPITAL CHUS SANTIAGO"),
@@ -57,36 +48,11 @@ INSERT INTO hospital (id, codigo, nombre) VALUES
 (6, 8765, 'Hospital del Este');
 
 
-
-
-
-
-
-
-
-INSERT INTO user (id, account_no_expired, account_no_locked, apellido, credential_no_expired, email, is_enabled, nombre, password) VALUES
-(1, TRUE, TRUE, "Lopez Sanchez",TRUE, 'test@test.com', TRUE, "Ramirez",'$2a$10$EaOIPn9whrM5QV/BiIL9Z.d./GcGalcpOE/WGOLSL.tUjuQ/ek9JG'), -- 12345
-(2, TRUE, TRUE, "Gago", TRUE, 'martin.gago@flowreserve.es', TRUE, "Martin", '$2a$10$EaOIPn9whrM5QV/BiIL9Z.d./GcGalcpOE/WGOLSL.tUjuQ/ek9JG'); -- 12345
-
 INSERT INTO medico (id, especialidad, hospital_id) VALUES 
 (1, "CARDIOLOGO", 1),
 (2, "CARDIOLOGO", 2);
 
 
-
-INSERT INTO paciente(id, apellido, nhc, nombre, medico_id) VALUES
-(1, "Casal", "12345678H", "Paula", 1),
-(2, "Naranjo", "65432134H", "Carlos", 1);
-
-
-
-
-
-
-INSERT INTO invitaciones (codigo, hospital_id, usada) VALUES
-('INV-025F225F', 1, 0),
-('INV-035G224F', 1, 0),
-('INV-045L223F', 2, 0);
 
 
 

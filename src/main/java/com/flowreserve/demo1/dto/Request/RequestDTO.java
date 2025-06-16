@@ -8,16 +8,11 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class RequestDTO {
-    private String pressureA;
 
-    private String pressureB;
-
+    private int presionSistolica;
+    private int presionDiastolica;
     private String comentarios;
-
-    private Long idPaciente;
-
-
-
+    private long idPaciente;
 
 }
 

@@ -1,6 +1,7 @@
 package com.flowreserve.demo1.service.Request;
 
 import com.flowreserve.demo1.dto.Request.RequestDTO;
+import com.flowreserve.demo1.exceptions.CustomExceptions;
 import com.flowreserve.demo1.mapper.RequestMapper;
 import com.flowreserve.demo1.model.Medico.Medico;
 import com.flowreserve.demo1.model.Paciente.Paciente;
@@ -201,19 +202,25 @@ public class RequestService {
         return requestRepository.findAll(pageable);
     }
 
-   public void cambiarEstado (Long requestID, EstadoSolicitudEnum nuevoEstado){
+
+    /**
+     * Actualiza el estado de una consulta.
+     *
+     * @param requestID   identificador de la consulta sobre la que se quiere modificar el estado
+     * @param nuevoEstado nuevo estado que se le quiere añadir a la consulta.
+     */
+    public void cambiarEstado(Long requestID, EstadoSolicitudEnum nuevoEstado) {
 
         Request request = requestRepository.findById(requestID)
                 .orElseThrow(() -> new RuntimeException("Request no encontrada"));
 
+        if (request.getState() == EstadoSolicitudEnum.COMPLETADA) {
+            throw new CustomExceptions.UnmodifiableRequestException("No se puede cambiar una solicitud completada.");
+        }
 
-       if (request.getState() == EstadoSolicitudEnum.COMPLETADA) {
-           throw new IllegalStateException("No se puede cambiar una solicitud completada.");
-       }
-
-       request.setState(nuevoEstado);
-       requestRepository.save(request);
-   }
+        request.setState(nuevoEstado);
+        requestRepository.save(request);
+    }
 
 
 

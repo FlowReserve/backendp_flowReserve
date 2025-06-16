@@ -10,4 +10,10 @@ public class CustomExceptions {
         }
     }
 
+    public static class UnmodifiableRequestException extends RuntimeException {
+        public UnmodifiableRequestException(String message) {
+            super(message);
+        }
+    }
+
 }

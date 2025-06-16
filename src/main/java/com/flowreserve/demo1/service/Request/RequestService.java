@@ -1,5 +1,6 @@
 package com.flowreserve.demo1.service.Request;
 
+import com.flowreserve.demo1.dto.Medico.MedicoEstadisticasDTO;
 import com.flowreserve.demo1.dto.Request.RequestDTO;
 import com.flowreserve.demo1.exceptions.CustomExceptions;
 import com.flowreserve.demo1.mapper.RequestMapper;
@@ -241,5 +242,15 @@ public class RequestService {
 
         return resumen;
     }
+
+    /**
+     * Obtiene las estadisticas de un medico bajo una unica consulta SQL
+     * @param medicoId identificador del medico sobre el que se quiere realizar la consulta.
+     * @return
+     */
+    public MedicoEstadisticasDTO obtenerResumenConsultasPorMedicoOptimized(Long medicoId) {
+        return requestRepository.getEstadisticasByMedico(medicoId);
+    }
+
 
 }

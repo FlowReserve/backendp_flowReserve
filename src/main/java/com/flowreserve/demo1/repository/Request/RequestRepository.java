@@ -1,5 +1,6 @@
 package com.flowreserve.demo1.repository.Request;
 
+import com.flowreserve.demo1.dto.Medico.MedicoEstadisticasDTO;
 import com.flowreserve.demo1.model.Request.Request;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,6 +29,20 @@ public interface RequestRepository extends JpaRepository<Request, Long> {
 
     @Query("SELECT COUNT(r) FROM Request r WHERE r.medico.id = :medicoId AND r.state = 'CANCELADA'")
     Long countCanceladasByMedico(@Param("medicoId") Long medicoId);
+
+ @Query("""
+    SELECT new com.flowreserve.demo1.dto.Medico.MedicoEstadisticasDTO(
+        COUNT(r),
+        SUM(CASE WHEN r.state = 'EN_PROCESO' THEN 1 ELSE 0 END),
+        SUM(CASE WHEN r.state = 'COMPLETADA' THEN 1 ELSE 0 END),
+        SUM(CASE WHEN r.state = 'PENDIENTE' THEN 1 ELSE 0 END),
+        SUM(CASE WHEN r.state = 'CANCELADA' THEN 1 ELSE 0 END)
+    )
+    FROM Request r
+    WHERE r.medico.id = :medicoId
+""")
+ MedicoEstadisticasDTO getEstadisticasByMedico(@Param("medicoId") Long medicoId);
+
 
 
 }

@@ -1,12 +1,15 @@
 package com.flowreserve.demo1.controller.Request;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.flowreserve.demo1.dto.Medico.MedicoEstadisticasDTO;
 import com.flowreserve.demo1.dto.Request.EstadoUpdateDTO;
 import com.flowreserve.demo1.dto.Request.RequestDTO;
 import com.flowreserve.demo1.dto.Request.RequestResponseDTO;
 import com.flowreserve.demo1.dto.global.ApiResponseDTO;
 import com.flowreserve.demo1.mapper.RequestMapper;
+import com.flowreserve.demo1.model.Medico.Medico;
 import com.flowreserve.demo1.model.Request.Request;
+import com.flowreserve.demo1.service.Medico.MedicoService;
 import com.flowreserve.demo1.service.Request.RequestService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -45,6 +48,7 @@ public class RequestController {
 
     private final RequestService requestService;
     private  final RequestMapper requestMapper;
+    private final MedicoService medicoService;
     private final ObjectMapper objectMapper;
 
     /**
@@ -166,9 +170,11 @@ public class RequestController {
 
 
     @GetMapping("/resumen/{medicoId}")
-    public ResponseEntity<Map<String, Long>> obtenerResumen(@PathVariable Long medicoId) {
-        Map<String, Long> resumen = requestService.obtenerResumenConsultasPorMedico(medicoId);
-        return ResponseEntity.ok(resumen);
+    public ResponseEntity<ApiResponseDTO<MedicoEstadisticasDTO>> obtenerResumen(@PathVariable Long medicoId) {
+        //Primero valida que el medico sobre el que se quieren obtner los datos existe en la BBDD.
+        Medico medico = medicoService.findById(medicoId);
+        MedicoEstadisticasDTO medicoEstadisticasDTO = requestService.obtenerResumenConsultasPorMedicoOptimized(medico.getId());
+        return ApiResponseDTO.success("Estadísticas de médico encontradas con éxito", medicoEstadisticasDTO, HttpStatus.OK);
     }
 
 }

@@ -147,11 +147,11 @@ public class RequestController {
 
 
     //@PreAuthorize("hasAnyRole('ADMIN', 'DEVELOPER')")
-    @GetMapping("/admin/descargar/{requestId}")
-    public ResponseEntity<?> procesarArchivos(@PathVariable Long requestId) {
+    @GetMapping("/{id}/archivo")
+    public ResponseEntity<?> procesarArchivos(@PathVariable Long id) {
 
         try {
-            List<String> archivosProcesados = requestService.obtenerZipCompleto(requestId);
+            List<String> archivosProcesados = requestService.obtenerZipCompleto(id);
             Map<String, Object> respuesta = new HashMap<>();
             respuesta.put("mensaje", "Archivos procesados correctamente");
             respuesta.put("archivos", archivosProcesados);

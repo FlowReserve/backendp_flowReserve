@@ -28,8 +28,6 @@ public class MedicoMapper {
         if (medicoDTO == null) return null;
 
 
-
-
         Medico medico = Medico.builder()
                 .nombre(medicoDTO.getNombre())
                 .apellido(medicoDTO.getApellido())
@@ -43,21 +41,12 @@ public class MedicoMapper {
     }
 
 
-
-
-
-
     public MedicoProfileDTO toMedicoProfileDTO(Medico medico){
         if(medico == null) return null;
 
         Set<String> roles = medico.getRoleModelSet().stream()
                 .map(role -> role.getRoleEnum().name()) // o el campo que quieras mostrar
                 .collect(Collectors.toSet());
-
-
-
-
-
 
         return MedicoProfileDTO.builder()
                 .email(medico.getEmail())

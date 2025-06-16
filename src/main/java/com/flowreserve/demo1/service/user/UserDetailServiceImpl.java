@@ -63,9 +63,11 @@ public class UserDetailServiceImpl implements UserDetailsService {
     }
 
 
-
-
-
+    /**
+     * Funcion que maneja el login de un usuario al sistema.
+     * @param authLoginRequest solicitud de datos necesarios para realizar el login del usuario
+     * @return
+     */
     public AuthReponse loginUser(AuthLoginRequest authLoginRequest) {
         String email = authLoginRequest.email();
         String password = authLoginRequest.password();
@@ -78,14 +80,9 @@ public class UserDetailServiceImpl implements UserDetailsService {
         User usuario = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
 
-        // 🧰 Mapear a DTO
+
         UserResponseDTO userDto = userMapper.toUserDTO(usuario);
-
-
-
-        AuthReponse authReponse = new AuthReponse(userDto, "User loged successfuly", accesToken, true);
-        return authReponse;
-
+        return new AuthReponse(userDto, accesToken);
     }
 
     public Authentication authenticate(String email, String password) {

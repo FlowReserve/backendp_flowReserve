@@ -137,4 +137,12 @@ public class RequestController
 
 
     }
+
+
+    @GetMapping("/resumen/{medicoId}")
+    public ResponseEntity<Map<String, Long>> obtenerResumen(@PathVariable Long medicoId) {
+        Map<String, Long> resumen = requestService.obtenerResumenConsultasPorMedico(medicoId);
+        return ResponseEntity.ok(resumen);
+    }
+
 }

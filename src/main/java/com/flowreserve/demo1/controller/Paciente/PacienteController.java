@@ -22,10 +22,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 @RestController
@@ -86,6 +83,15 @@ public class PacienteController {
         PacienteResponseDTO pacienteResponseDTO = pacienteMapper.toPacienteResponseDTO(paciente);
 
         return ApiResponseDTO.success("Paciente encontrado con éxito",pacienteResponseDTO, HttpStatus.OK);
+    }
+
+    @GetMapping("/count-by-medico/{medicoId}")
+    public ResponseEntity<Map<String, Object>> contarPacientes(@PathVariable Long medicoId) {
+        Long total = pacienteService.obtenerNumeroDePacientesDelMedico(medicoId);
+        Map<String, Object> respuesta = new HashMap<>();
+        respuesta.put("medicoId", medicoId);
+        respuesta.put("totalPacientes", total);
+        return ResponseEntity.ok(respuesta);
     }
 
 }

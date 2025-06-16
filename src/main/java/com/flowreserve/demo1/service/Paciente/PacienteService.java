@@ -79,7 +79,9 @@ public class PacienteService {
         return pacienteRepository.findByMedicoId(medico.getId(), pageable);
     }
 
-
+    public Long obtenerNumeroDePacientesDelMedico(Long medicoId) {
+        return pacienteRepository.contarPacientesPorMedico(medicoId);
+    }
 
 
 }

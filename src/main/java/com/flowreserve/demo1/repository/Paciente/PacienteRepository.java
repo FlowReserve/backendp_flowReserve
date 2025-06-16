@@ -22,5 +22,7 @@ public interface PacienteRepository extends JpaRepository<Paciente, Long> {
     @Query("SELECT p FROM Paciente p WHERE p.id = :pacienteId AND p.medico.id = :medicoId")
     Optional<Paciente> findByIdAndMedicoId(@Param("pacienteId") Long pacienteId, @Param("medicoId") Long medicoId);
 
+    @Query("SELECT COUNT(p) FROM Paciente p WHERE p.medico.id = :medicoId")
+    Long contarPacientesPorMedico(@Param("medicoId") Long medicoId);
 
 }

@@ -34,7 +34,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -110,6 +112,7 @@ public class RequestService {
         requestRepository.save(request);
         return request.getCodigo();
     }
+    // faltara meter carpeta asociada previo mandar los 2 archivos a response
     public List<String> obtenerZipCompleto(Long requestId) throws IOException {
         Request request = requestRepository.findById(requestId)
                 .orElseThrow(() -> new FileNotFoundException("Request no encontrado"));
@@ -215,6 +218,21 @@ public class RequestService {
        requestRepository.save(request);
    }
 
+    public Map<String, Long> obtenerResumenConsultasPorMedico(Long medicoId) {
+        Long total = requestRepository.countTotalByMedico(medicoId);
+        Long enCurso = requestRepository.countEnCursoByMedico(medicoId);
+        Long finalizadas = requestRepository.countFinalizadasByMedico(medicoId);
+        Long canceladas = requestRepository.countCanceladasByMedico(medicoId);
+        long pendientes = requestRepository.countPendientesByMedico(medicoId);
 
+        Map<String, Long> resumen = new HashMap<>();
+        resumen.put("total", total);
+        resumen.put("enCurso", enCurso);
+        resumen.put("finalizadas", finalizadas);
+        resumen.put("canceladas", canceladas);
+        resumen.put("pendientes", pendientes);
+
+        return resumen;
+    }
 
 }

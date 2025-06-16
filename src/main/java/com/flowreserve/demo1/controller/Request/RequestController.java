@@ -168,11 +168,15 @@ public class RequestController {
 
     }
 
-
-    @GetMapping("/resumen/{medicoId}")
-    public ResponseEntity<ApiResponseDTO<MedicoEstadisticasDTO>> obtenerResumen(@PathVariable Long medicoId) {
+    /**
+     * Permite obtener la información de estadísticas de consultas realizadas por un paciente
+     * @param id identificador del usuario sobre el que se quieren ver las consultas realizadas.
+     * @return ResponseEntity con todas las consultas que ha realizado.
+     */
+    @GetMapping("/{id}/resumen")
+    public ResponseEntity<ApiResponseDTO<MedicoEstadisticasDTO>> obtenerResumen(@PathVariable Long id) {
         //Primero valida que el medico sobre el que se quieren obtner los datos existe en la BBDD.
-        Medico medico = medicoService.findById(medicoId);
+        Medico medico = medicoService.findById(id);
         MedicoEstadisticasDTO medicoEstadisticasDTO = requestService.obtenerResumenConsultasPorMedicoOptimized(medico.getId());
         return ApiResponseDTO.success("Estadísticas de médico encontradas con éxito", medicoEstadisticasDTO, HttpStatus.OK);
     }

@@ -15,6 +15,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
@@ -23,12 +25,19 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
 @RequiredArgsConstructor
 
 @Service
@@ -101,7 +110,59 @@ public class RequestService {
         requestRepository.save(request);
         return request.getCodigo();
     }
+    public List<String> obtenerZipCompleto(Long requestId) throws IOException {
+        Request request = requestRepository.findById(requestId)
+                .orElseThrow(() -> new FileNotFoundException("Request no encontrado"));
 
+        String rutaZipRelativa = request.getNombreArchivoZip();
+        if (rutaZipRelativa == null || rutaZipRelativa.isEmpty()) {
+            throw new FileNotFoundException("No hay archivo ZIP asociado a este request");
+        }
+
+        Path rutaZipOriginal = Paths.get(rootPath).resolve(rutaZipRelativa);
+        if (!Files.exists(rutaZipOriginal)) throw new FileNotFoundException("ZIP original no encontrado");
+
+        String codigoRequest = request.getCodigo();
+        Path carpetaRequest = rutaZipOriginal.getParent();
+        Path rutaTxt = carpetaRequest.resolve("info_" + codigoRequest + ".txt");
+        if (!Files.exists(rutaTxt)) throw new FileNotFoundException("TXT no encontrado");
+
+        // === Copiar archivos a carpeta 'response'
+        Path carpetaResponse = carpetaRequest.getParent().resolve("response");
+        Files.createDirectories(carpetaResponse);
+
+        Path destinoZip = carpetaResponse.resolve(rutaZipOriginal.getFileName());
+        Path destinoTxt = carpetaResponse.resolve(rutaTxt.getFileName());
+
+        Files.copy(rutaZipOriginal, destinoZip, StandardCopyOption.REPLACE_EXISTING);
+        Files.copy(rutaTxt, destinoTxt, StandardCopyOption.REPLACE_EXISTING);
+
+        // === Crear nuevo ZIP para descarga
+        Path zipFinal = Files.createTempFile("request-" + codigoRequest + "-", ".zip");
+
+        try (ZipOutputStream zipOut = new ZipOutputStream(Files.newOutputStream(zipFinal))) {
+            agregarArchivoAlZip(destinoZip, destinoZip.getFileName().toString(), zipOut);
+            agregarArchivoAlZip(destinoTxt, destinoTxt.getFileName().toString(), zipOut);
+        }
+
+        return List.of(rutaZipOriginal.getFileName().toString(), rutaTxt.getFileName().toString());
+    }
+
+
+
+    private void agregarArchivoAlZip(Path archivo, String nombreEnZip, ZipOutputStream zipOut) throws IOException {
+        try (InputStream in = Files.newInputStream(archivo)) {
+            ZipEntry zipEntry = new ZipEntry(nombreEnZip);
+            zipOut.putNextEntry(zipEntry);
+
+            byte[] buffer = new byte[1024];
+            int len;
+            while ((len = in.read(buffer)) > 0) {
+                zipOut.write(buffer, 0, len);
+            }
+            zipOut.closeEntry();
+        }
+    }
 
     public Page<Request> listarRequestsByMedico(Pageable pageable){
 
@@ -153,5 +214,7 @@ public class RequestService {
        request.setState(nuevoEstado);
        requestRepository.save(request);
    }
+
+
 
 }

@@ -8,19 +8,31 @@ import com.flowreserve.demo1.mapper.RequestMapper;
 import com.flowreserve.demo1.model.Request.Request;
 import com.flowreserve.demo1.service.Request.RequestService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
 import org.springframework.web.bind.annotation.*;
+
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 @RestController
 
@@ -108,5 +120,21 @@ public class RequestController
         requestService.cambiarEstado(id, requestDTO.getState());
         return ResponseEntity.ok("Estado actualizado correctamente.");
     }
+    //@PreAuthorize("hasAnyRole('ADMIN', 'DEVELOPER')")
+    @GetMapping("/admin/descargar/{requestId}")
+    public ResponseEntity<?> procesarArchivos(@PathVariable Long requestId) {
 
+        try {
+            List<String> archivosProcesados = requestService.obtenerZipCompleto(requestId);
+            Map<String, Object> respuesta = new HashMap<>();
+            respuesta.put("mensaje", "Archivos procesados correctamente");
+            respuesta.put("archivos", archivosProcesados);
+            return ResponseEntity.ok(respuesta);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Error al procesar archivos"));
+        }
+
+
+    }
 }

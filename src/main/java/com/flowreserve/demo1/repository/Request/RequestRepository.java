@@ -36,12 +36,14 @@ public interface RequestRepository extends JpaRepository<Request, Long> {
         SUM(CASE WHEN r.state = 'EN_PROCESO' THEN 1 ELSE 0 END),
         SUM(CASE WHEN r.state = 'COMPLETADA' THEN 1 ELSE 0 END),
         SUM(CASE WHEN r.state = 'PENDIENTE' THEN 1 ELSE 0 END),
-        SUM(CASE WHEN r.state = 'CANCELADA' THEN 1 ELSE 0 END)
+        SUM(CASE WHEN r.state = 'CANCELADA' THEN 1 ELSE 0 END),
+        (SELECT COUNT(p) FROM Paciente p WHERE p.medico.id = :medicoId)
     )
     FROM Request r
     WHERE r.medico.id = :medicoId
 """)
  MedicoEstadisticasDTO getEstadisticasByMedico(@Param("medicoId") Long medicoId);
+
 
 
 

@@ -5,6 +5,7 @@ import com.flowreserve.demo1.dto.Medico.MedicoEstadisticasDTO;
 import com.flowreserve.demo1.dto.Request.EstadoUpdateDTO;
 import com.flowreserve.demo1.dto.Request.RequestDTO;
 import com.flowreserve.demo1.dto.Request.RequestResponseDTO;
+import com.flowreserve.demo1.dto.Request.ResponseRequestEstadoUpdateDTO;
 import com.flowreserve.demo1.dto.global.ApiResponseDTO;
 import com.flowreserve.demo1.mapper.RequestMapper;
 import com.flowreserve.demo1.model.Medico.Medico;
@@ -78,7 +79,7 @@ public class RequestController {
      * @param pageable objeto de paginacion que devuelve las consultas.
      * @return
      */
-    @PreAuthorize("hasAnyRole('MEDICO', 'ADMIN', 'DEVELOPER')")
+    @PreAuthorize("hasAnyRole('DOCTOR', 'ADMIN', 'DEVELOPER')")
     @GetMapping("/listarRequestsMedico")
     public ResponseEntity<Page<Request>> getMyRequests(Pageable pageable) {
         Page<Request> requests = requestService.listarRequestsByMedico(pageable);
@@ -88,19 +89,34 @@ public class RequestController {
 
     /**
      * Lista las solicitudes existentes para un paciente con un ID pasado como parámetro
-     * @param pacienteId identificador del paciente sobre el que se quiere obtener una consulta específica.
-     * @param pageable paginacion con los datos devueltos de las consultas existentes para un paciente bajo un identificador.
-     * @return
+     * @param id identificador del paciente sobre el que se quiere obtener una consulta específica.
+     * @param page número de pagina
+     * @param size tamaño de la página
+     * @param sortBy atributo de ordenación
+     * @param sortDir dirección de ordenación
+     * @return objeto paginado con la información de la consulta solicitada.
      */
     @PreAuthorize("hasAnyRole('DOCTOR')")
-    @GetMapping("/mis-solicitudes")
-    public  ResponseEntity<Page<RequestResponseDTO>> getMyRequestPatient(@RequestParam long pacienteId, Pageable pageable){
-        Page<Request> requests = requestService.listarRequestByPaciente(pacienteId,pageable);
+    @GetMapping("/mis-solicitudes/{id}")
+    public ResponseEntity<ApiResponseDTO<Page<RequestResponseDTO>>> getMyRequestPatient(
+            @PathVariable long id,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir) {
 
+        // Limitar tamaño de página a 25
+        int pageSize = Math.min(size, 25);
+
+        Sort sort = sortDir.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+
+        Pageable pageable = PageRequest.of(page, pageSize, sort);
+        Page<Request> requests = requestService.listarRequestByPaciente(id, pageable);
         // Mapear cada Request a RequestResponseDTO
         Page<RequestResponseDTO> dtoPage = requests.map(requestMapper::toRequestResponseDTO);
-
-        return  ResponseEntity.ok(dtoPage);
+        return ApiResponseDTO.success("Listado de consultas para el paciente:"+ id + " encontrado con éxito", dtoPage, HttpStatus.OK);
     }
 
     /**
@@ -137,16 +153,17 @@ public class RequestController {
      * Funcion que permite actualizar el estado de una consulta por parte de un usuario administrador.
       * @param id identificador de la consulta sobre la que se quiere actualizar su estado.
      * @param estadoUpdateDTO estado nuevo que se le quiere proporcionar a la solicitud
-     * @return
+     * @return responseRequestEstadoUpdateDTO
      */
     @PreAuthorize("hasAnyRole('ADMIN', 'DEVELOPER')")
     @PutMapping("/{id}/estado")
-    public ResponseEntity<?> cambiarEstadoRequest(
+    public ResponseEntity<ApiResponseDTO<ResponseRequestEstadoUpdateDTO>> cambiarEstadoRequest(
             @PathVariable Long id,
             @Valid @RequestBody EstadoUpdateDTO estadoUpdateDTO) {
 
-        requestService.cambiarEstado(id, estadoUpdateDTO.getEstado());
-        return ResponseEntity.ok("Estado actualizado correctamente.");
+        Request request = requestService.cambiarEstado(id, estadoUpdateDTO.getEstado());
+        ResponseRequestEstadoUpdateDTO responseRequestEstadoUpdateDTO = requestMapper.responseRequestEstadoUpdateDTO(request);
+        return ApiResponseDTO.success("Estado de la solicitud actualizado correctamente", responseRequestEstadoUpdateDTO, HttpStatus.OK);
     }
 
 

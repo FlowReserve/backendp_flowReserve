@@ -212,8 +212,9 @@ public class RequestService {
      *
      * @param requestID   identificador de la consulta sobre la que se quiere modificar el estado
      * @param nuevoEstado nuevo estado que se le quiere añadir a la consulta.
+     * @Return Request actualizado con el nuevo estado.
      */
-    public void cambiarEstado(Long requestID, EstadoSolicitudEnum nuevoEstado) {
+    public Request cambiarEstado(Long requestID, EstadoSolicitudEnum nuevoEstado) {
 
         Request request = requestRepository.findById(requestID)
                 .orElseThrow(() -> new RuntimeException("Request no encontrada"));
@@ -224,6 +225,7 @@ public class RequestService {
 
         request.setState(nuevoEstado);
         requestRepository.save(request);
+        return request;
     }
 
     public Map<String, Long> obtenerResumenConsultasPorMedico(Long medicoId) {

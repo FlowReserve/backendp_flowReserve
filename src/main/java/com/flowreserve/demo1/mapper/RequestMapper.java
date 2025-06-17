@@ -2,6 +2,7 @@ package com.flowreserve.demo1.mapper;
 
 import com.flowreserve.demo1.dto.Request.RequestDTO;
 import com.flowreserve.demo1.dto.Request.RequestResponseDTO;
+import com.flowreserve.demo1.dto.Request.ResponseRequestEstadoUpdateDTO;
 import com.flowreserve.demo1.model.Request.Request;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -33,6 +34,20 @@ public class RequestMapper {
                 .comentarios(request.getComentarios())
                 .nombreArchivoZip(request.getNombreArchivoZip())
                 .paciente(pacienteMapper.toPacienteResponseDTO(request.getPaciente()))
+                .build();
+    }
+
+    /**
+     * Mapea un request a un DTO personalizado que contiene información básica de una request cuyo estado fue actualizado
+     * @param request request que se quiere mapear
+     * @return
+     */
+    public ResponseRequestEstadoUpdateDTO responseRequestEstadoUpdateDTO(Request request){
+        if(request == null) return null;
+        return ResponseRequestEstadoUpdateDTO.builder()
+                .id(request.getId())
+                .codigo(request.getCodigo())
+                .estado(request.getState())
                 .build();
     }
 

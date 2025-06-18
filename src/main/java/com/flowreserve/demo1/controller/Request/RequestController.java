@@ -76,16 +76,36 @@ public class RequestController {
 
     /**
      * Funcion para médicos que lista todas las solicitudes existentes en la base de datos asociadas con el usuario logueado.
-     * @param pageable objeto de paginacion que devuelve las consultas.
-     * @return
+     * @param page número de pagina
+     * @param size tamaño de la página
+     * @param sortBy atributo de ordenación
+     * @param sortDir dirección de ordenación
+     * @return objeto paginado con la información de la consulta solicitada.
      */
     @PreAuthorize("hasAnyRole('DOCTOR', 'ADMIN', 'DEVELOPER')")
-    @GetMapping("/listarRequestsMedico")
-    public ResponseEntity<Page<Request>> getMyRequests(Pageable pageable) {
-        Page<Request> requests = requestService.listarRequestsByMedico(pageable);
-        return ResponseEntity.ok(requests);
-    }
+    @GetMapping("/mis-solicitudes")
+    public ResponseEntity<ApiResponseDTO<Page<RequestResponseDTO>>> getMyRequests(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir
+    ) {
+        // Limitar tamaño de página a 25
+        int pageSize = Math.min(size, 25);
 
+        Sort sort = sortDir.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+
+        Pageable pageable = PageRequest.of(page, pageSize, sort);
+
+        Page<Request> requests = requestService.listarRequestsByMedico(pageable);
+        Page<RequestResponseDTO> requestResponseDTOS = requests.map(requestMapper::toRequestResponseDTO);
+        return ApiResponseDTO.success("Listado de consultas existentes para un doctor encontrado correctamente",
+                requestResponseDTOS,
+                HttpStatus.OK);
+
+    }
 
     /**
      * Lista las solicitudes existentes para un paciente con un ID pasado como parámetro

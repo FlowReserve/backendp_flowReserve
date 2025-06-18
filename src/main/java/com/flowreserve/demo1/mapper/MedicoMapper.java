@@ -49,6 +49,7 @@ public class MedicoMapper {
                 .collect(Collectors.toSet());
 
         return MedicoProfileDTO.builder()
+                .id(medico.getId())
                 .email(medico.getEmail())
                 .apellido(medico.getApellido())
                 .nombre(medico.getNombre())

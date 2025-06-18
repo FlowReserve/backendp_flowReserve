@@ -10,6 +10,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Builder
 public class MedicoProfileDTO {
+    private long id;
     private String nombre;
     private String apellido;
     private String email;

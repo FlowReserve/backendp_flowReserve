@@ -15,4 +15,5 @@ public class MedicoEstadisticasDTO {
     private Long finalizadas;
     private Long pendientes;
     private Long canceladas;
+    private Long totalPacientes;
 }

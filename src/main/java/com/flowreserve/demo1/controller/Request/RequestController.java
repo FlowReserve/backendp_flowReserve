@@ -64,7 +64,7 @@ public class RequestController {
      */
     @PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR')")
     @PostMapping(value = "/new", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> crearRequestConArchivos(
+    public ResponseEntity<ApiResponseDTO<RequestResponseDTO>> crearRequestConArchivos(
             @RequestPart("json") String requestJson,
             @RequestPart("archivoZip") MultipartFile archivoZip) {
         try {
@@ -77,15 +77,14 @@ public class RequestController {
                     errorMsg.append(violation.getPropertyPath()).append(": ")
                             .append(violation.getMessage()).append(". ");
                 }
-                return ResponseEntity.badRequest().body("Error de validación: " + errorMsg);
+                return ApiResponseDTO.error("Error de validación: " + errorMsg, HttpStatus.BAD_REQUEST);
             }
 
-            String codigo = requestService.crearRequestConArchivos(requestDTO, archivoZip);
-            return ResponseEntity.ok("Request creada con código: " + codigo);
+            Request request =  requestService.crearRequestConArchivos(requestDTO, archivoZip);
+            RequestResponseDTO requestResponseDTO = requestMapper.toRequestResponseDTO(request);
+            return ApiResponseDTO.success("Solicitud de paciente creada con éxito", requestResponseDTO, HttpStatus.CREATED);
         } catch (Exception e) {
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error al crear la request: " + e.getMessage());
+            return ApiResponseDTO.error("Error inesperado al crear la solicitud: " + e, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

@@ -2,6 +2,7 @@ package com.flowreserve.demo1.service.Request;
 
 import com.flowreserve.demo1.dto.Medico.MedicoEstadisticasDTO;
 import com.flowreserve.demo1.dto.Request.RequestDTO;
+import com.flowreserve.demo1.dto.Request.RequestResponseDTO;
 import com.flowreserve.demo1.exceptions.CustomExceptions;
 import com.flowreserve.demo1.mapper.RequestMapper;
 import com.flowreserve.demo1.model.Medico.Medico;
@@ -60,12 +61,10 @@ public class RequestService {
     private String rootPath;
 
     @Transactional
-    public String crearRequestConArchivos(RequestDTO dto, MultipartFile archivoZip) throws IOException {
-        Request request = new Request();
-
+    public Request crearRequestConArchivos(RequestDTO dto, MultipartFile archivoZip) throws IOException {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String emailMedico = auth.getName();
-        request = requestMapper.toRequestModel(dto);
+        Request request = requestMapper.toRequestModel(dto);
         Medico medico = medicoService.findByEmail(emailMedico);
         request.setMedico(medico);
 
@@ -75,8 +74,6 @@ public class RequestService {
         // Fecha y estado
         request.setDate(LocalDateTime.now());
         request.setState(EstadoSolicitudEnum.PENDIENTE);
-
-
 
         // Guardar el request para generar el código (si es generado en la BD)
         if (request.getCodigo() == null) {
@@ -103,16 +100,17 @@ public class RequestService {
             // Crear archivo .txt con presiones y comentarios
             String contenidoTxt = "Presión Sistólica: " + dto.getPresionSistolica() + "\n"
                     + "Presión diastólica: " + dto.getPresionDiastolica() + "\n"
-                    + "Comentarios: " + dto.getComentarios();
+                    + "Comentarios: " + dto.getComentarios() + "\n"
+                    + "Lesiones: " + dto.getLesiones() + "\n"
+                    + "Lesiones_personalizadas: " + dto.getLesionesPersonalizadas();
 
             String nombreArchivoTxt = "info_" + codigoRequest + ".txt";
             Path rutaArchivoTxt = carpetaDestino.resolve(nombreArchivoTxt);
             Files.writeString(rutaArchivoTxt, contenidoTxt, StandardCharsets.UTF_8);
         }
 
-        // Guardar request actualizado
-        requestRepository.save(request);
-        return request.getCodigo();
+        // Guardar y devolver el request actualizado
+        return  requestRepository.save(request);
     }
     // faltara meter carpeta asociada previo mandar los 2 archivos a response
     public List<String> obtenerZipCompleto(Long requestId) throws IOException {

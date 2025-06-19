@@ -21,5 +21,7 @@ public class RequestResponseDTO {
     private String comentarios;
     private int presionSistolica;
     private int presionDiastolica;
+    private String lesiones;
+    private String lesionesPersonalizadas;
 
 }

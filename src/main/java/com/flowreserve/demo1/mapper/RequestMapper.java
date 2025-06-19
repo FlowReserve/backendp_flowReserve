@@ -19,6 +19,8 @@ public class RequestMapper {
                 .presionSistolica(requestDTO.getPresionSistolica())
                 .presionDiastolica(requestDTO.getPresionDiastolica())
                 .comentarios(requestDTO.getComentarios())
+                .lesiones(requestDTO.getLesiones())
+                .lesionesPersonalizadas(requestDTO.getLesionesPersonalizadas())
                 .build();
     }
 
@@ -33,6 +35,8 @@ public class RequestMapper {
                 .presionDiastolica(request.getPresionDiastolica())
                 .comentarios(request.getComentarios())
                 .nombreArchivoZip(request.getNombreArchivoZip())
+                .lesiones(request.getLesiones())
+                .lesionesPersonalizadas(request.getLesionesPersonalizadas())
                 .paciente(pacienteMapper.toPacienteResponseDTO(request.getPaciente()))
                 .build();
     }

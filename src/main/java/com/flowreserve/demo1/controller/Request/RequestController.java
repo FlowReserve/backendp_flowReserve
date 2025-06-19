@@ -12,7 +12,9 @@ import com.flowreserve.demo1.model.Medico.Medico;
 import com.flowreserve.demo1.model.Request.Request;
 import com.flowreserve.demo1.service.Medico.MedicoService;
 import com.flowreserve.demo1.service.Request.RequestService;
+import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Valid;
+import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -38,6 +40,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -51,6 +54,7 @@ public class RequestController {
     private  final RequestMapper requestMapper;
     private final MedicoService medicoService;
     private final ObjectMapper objectMapper;
+    private final Validator validator;
 
     /**
      * Crea una nueva solicitud de consulta a un paciente en la base de datos.
@@ -65,6 +69,17 @@ public class RequestController {
             @RequestPart("archivoZip") MultipartFile archivoZip) {
         try {
             RequestDTO requestDTO = objectMapper.readValue(requestJson, RequestDTO.class);
+
+            Set<ConstraintViolation<RequestDTO>> violations = validator.validate(requestDTO);
+            if (!violations.isEmpty()) {
+                StringBuilder errorMsg = new StringBuilder();
+                for (ConstraintViolation<RequestDTO> violation : violations) {
+                    errorMsg.append(violation.getPropertyPath()).append(": ")
+                            .append(violation.getMessage()).append(". ");
+                }
+                return ResponseEntity.badRequest().body("Error de validación: " + errorMsg);
+            }
+
             String codigo = requestService.crearRequestConArchivos(requestDTO, archivoZip);
             return ResponseEntity.ok("Request creada con código: " + codigo);
         } catch (Exception e) {

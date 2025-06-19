@@ -22,8 +22,8 @@ public class Request {
     private Long id;
 
     // Médico que hace la petición
-    @ManyToOne
     @JsonIgnore
+    @ManyToOne
     @JoinColumn(name = "medico_id")
 
     // mejor usar "medico_id" en lugar de "user_id"
@@ -36,21 +36,18 @@ public class Request {
 
     @OneToOne(mappedBy = "request", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private Response response;
-
     private LocalDateTime date;
 
     @Enumerated(EnumType.STRING)
     private EstadoSolicitudEnum state;
 
     private int presionSistolica;
-    
     private int presionDiastolica;
-
     private String nombreArchivoZip;
-
     private String comentarios;
-
     private String codigo;
+    private String lesiones;
+    private String lesionesPersonalizadas;
 
 
     @PrePersist

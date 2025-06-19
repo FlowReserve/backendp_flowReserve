@@ -35,13 +35,18 @@ public class PacienteController {
     private final PacienteMapper pacienteMapper;
 
 
-    //devolver dto y no un ?
+    /**
+     * Controller que se encarga de crear un paciente en la base de datos y devuelve un DTO con la información del nuevo paciente creado.
+     * @param pacienteDTO datos del paciente que se quiere subir en la base de datos.
+     * @return ApiResponse con los datos del paciente subido.
+     */
     @PreAuthorize("hasRole('DOCTOR')")
     @PostMapping("/new")
-    public ResponseEntity<?> crearPaciente(@Valid @RequestBody PacienteDTO pacienteDTO) {
-        pacienteService.crearPaciente(pacienteDTO);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(Map.of("mensaje", "Paciente creado correctamente"));
+    public ResponseEntity<ApiResponseDTO<PacienteResponseDTO>> crearPaciente(@Valid @RequestBody PacienteDTO pacienteDTO) {
+        Paciente paciente = pacienteService.crearPaciente(pacienteDTO);
+        PacienteResponseDTO pacienteResponseDTO = pacienteMapper.toPacienteResponseDTO(paciente);
+
+        return ApiResponseDTO.success("Paciente creado con éxito", pacienteResponseDTO, HttpStatus.CREATED);
     }
 
     @PreAuthorize("hasRole('DOCTOR')")

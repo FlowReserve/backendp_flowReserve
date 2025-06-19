@@ -8,6 +8,7 @@ import com.flowreserve.demo1.model.Medico.Medico;
 import com.flowreserve.demo1.model.Paciente.Paciente;
 import com.flowreserve.demo1.model.Request.EstadoSolicitudEnum;
 import com.flowreserve.demo1.model.Request.Request;
+import com.flowreserve.demo1.repository.Hospital.HospitalRepository;
 import com.flowreserve.demo1.repository.Medico.MedicoRepository;
 import com.flowreserve.demo1.repository.Paciente.PacienteRepository;
 import com.flowreserve.demo1.repository.Request.RequestRepository;
@@ -54,6 +55,7 @@ public class RequestService {
     private final MedicoRepository medicoRepository;
     private final PacienteRepository pacienteRepository;
     private final RequestMapper requestMapper;
+    private final HospitalRepository hospitalRepository;
 
 
     @Value("${ROOT_PATH}")
@@ -67,6 +69,8 @@ public class RequestService {
         String emailMedico = auth.getName();
         request = requestMapper.toRequestModel(dto);
         Medico medico = medicoService.findByEmail(emailMedico);
+
+
         request.setMedico(medico);
 
         Paciente paciente = pacienteService.findById(dto.getIdPaciente());
@@ -78,26 +82,27 @@ public class RequestService {
 
 
 
-        // Guardar el request para generar el código (si es generado en la BD)
-        if (request.getCodigo() == null) {
-            requestRepository.save(request);
-        }
 
+        String codigoHospital = medico.getHospital().getCodigo();// ej: "CHUS"
+        String codigoGenerado = codigoHospital + "_REQ-" + Long.toString(System.currentTimeMillis(), 36).toUpperCase();
+        request.setCodigo(codigoGenerado);
+        String codigoRequest = request.getCodigo();
         // Si hay archivo ZIP
         if (!archivoZip.isEmpty()) {
-            String nombreCarpeta = medico.getNombre().replaceAll("\\s+", "_");
-            String codigoRequest = request.getCodigo();
 
-            Path carpetaDestino = Paths.get(rootPath, nombreCarpeta, codigoRequest, "request");
+            String nombreCarpeta =  codigoRequest;
+
+
+            Path carpetaDestino = Paths.get(rootPath, nombreCarpeta, "request");
             Files.createDirectories(carpetaDestino);
 
             // Guardar ZIP con nombre = codigoRequest.zip
-            String nombreArchivoZip = codigoRequest + ".zip";
+            String nombreArchivoZip = nombreCarpeta + ".zip";
             Path rutaArchivoZip = carpetaDestino.resolve(nombreArchivoZip);
             Files.write(rutaArchivoZip, archivoZip.getBytes());
 
             // Guardar ruta relativa en la BD
-            Path rutaRelativa = Paths.get(nombreCarpeta, codigoRequest, "request", nombreArchivoZip);
+            Path rutaRelativa = Paths.get(nombreCarpeta, nombreArchivoZip);
             request.setNombreArchivoZip(rutaRelativa.toString());
 
             // Crear archivo .txt con presiones y comentarios
@@ -105,7 +110,7 @@ public class RequestService {
                     + "Presión diastólica: " + dto.getPresionDiastolica() + "\n"
                     + "Comentarios: " + dto.getComentarios();
 
-            String nombreArchivoTxt = "info_" + codigoRequest + ".txt";
+            String nombreArchivoTxt = "info_" + nombreCarpeta + ".txt";
             Path rutaArchivoTxt = carpetaDestino.resolve(nombreArchivoTxt);
             Files.writeString(rutaArchivoTxt, contenidoTxt, StandardCharsets.UTF_8);
         }

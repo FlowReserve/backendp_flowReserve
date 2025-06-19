@@ -53,10 +53,6 @@ public class Request {
     private String codigo;
 
 
-    @PrePersist
-    public void generarCodigo() {
-        long millis = System.currentTimeMillis();
-        this.codigo = "REQ-" + Long.toString(millis, 36).toUpperCase();
-    }
+
 
 }

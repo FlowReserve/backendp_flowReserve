@@ -25,14 +25,14 @@ public class HospitalDTO {
     private String nombreHospital;
 
     @NotNull(message = "El código es obligatorio")
-    private Long codigoHospital;
+    private String codigoHospital;
 
 
-    public Long getCodigoHospital() {
+    public String getCodigoHospital() {
         return codigoHospital;
     }
 
-    public void setCodigoHospital(Long codigoHospital) {
+    public void setCodigoHospital(String codigoHospital) {
         this.codigoHospital = codigoHospital;
     }
 }

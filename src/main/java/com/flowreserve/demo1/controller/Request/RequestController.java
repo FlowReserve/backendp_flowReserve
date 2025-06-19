@@ -170,7 +170,7 @@ public class RequestController {
 
 
     /**
-     * Funcion que permite actualizar el estado de una consulta por parte de un usuario administrador.
+      * Funcion que permite actualizar el estado de una consulta por parte de un usuario administrador.
       * @param id identificador de la consulta sobre la que se quiere actualizar su estado.
      * @param estadoUpdateDTO estado nuevo que se le quiere proporcionar a la solicitud
      * @return responseRequestEstadoUpdateDTO

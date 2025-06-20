@@ -1,5 +1,6 @@
 package com.flowreserve.demo1.controller.Paciente;
 import com.flowreserve.demo1.dto.Paciente.PacienteDTO;
+import com.flowreserve.demo1.dto.Paciente.PacienteEstadisticasDTO;
 import com.flowreserve.demo1.dto.Paciente.PacienteResponseDTO;
 import com.flowreserve.demo1.dto.global.ApiResponseDTO;
 import com.flowreserve.demo1.mapper.PacienteMapper;
@@ -88,6 +89,21 @@ public class PacienteController {
         PacienteResponseDTO pacienteResponseDTO = pacienteMapper.toPacienteResponseDTO(paciente);
 
         return ApiResponseDTO.success("Paciente encontrado con éxito",pacienteResponseDTO, HttpStatus.OK);
+    }
+
+    /**
+     * Obtiene un resumen de las estadisticas de consultas de un paciente, bajo el identificador del usuario logueado.
+     * @param idPaciente identificador del paciente sobre el que se quieren obtener las estadisticas
+     * @return ApiResponseDTO con la información de las estadísticas de un paciente.
+     */
+    @PreAuthorize("hasRole('DOCTOR')")
+    @GetMapping("/{id}/resumen")
+    public ResponseEntity<ApiResponseDTO<PacienteEstadisticasDTO>> obtenerEstadisticasPaciente(@PathVariable("id") Long idPaciente){
+        //Comprueba datos del usuario authenticado
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Long idMedico = obtenerMedicoService.obtenerIdMedicoPorMail(auth.getName());
+        PacienteEstadisticasDTO pacienteEstadisticasDTO = pacienteService.obtenerEstadisticasConsultasByPacienteID(idMedico, idPaciente);
+        return ApiResponseDTO.success("Estadísticas del paciente encontradas con éxito", pacienteEstadisticasDTO, HttpStatus.OK);
     }
 
     @GetMapping("/count-by-medico/{medicoId}")

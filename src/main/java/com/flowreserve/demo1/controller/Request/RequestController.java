@@ -137,7 +137,7 @@ public class RequestController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "id") String sortBy,
-            @RequestParam(defaultValue = "asc") String sortDir) {
+            @RequestParam(defaultValue = "desc") String sortDir) {
 
         // Limitar tamaño de página a 25
         int pageSize = Math.min(size, 25);
@@ -226,7 +226,7 @@ public class RequestController {
      */
     @GetMapping("/{id}/resumen")
     public ResponseEntity<ApiResponseDTO<MedicoEstadisticasDTO>> obtenerResumen(@PathVariable Long id) {
-        //Primero valida que el medico sobre el que se quieren obtner los datos existe en la BBDD.
+        //Primero valida que el medico sobre el que se quieren obtener los datos existe en la BBDD.
         Medico medico = medicoService.findById(id);
         MedicoEstadisticasDTO medicoEstadisticasDTO = requestService.obtenerResumenConsultasPorMedicoOptimized(medico.getId());
         return ApiResponseDTO.success("Estadísticas de médico encontradas con éxito", medicoEstadisticasDTO, HttpStatus.OK);

@@ -3,9 +3,15 @@ package com.flowreserve.demo1.model.Hospital;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.flowreserve.demo1.model.Medico.Medico;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import java.util.List;
-
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 public class Hospital  {
     @Id
@@ -30,11 +36,12 @@ public class Hospital  {
 
     private String nombre;
 
-    public Long getCodigo() {
+
+    public String getCodigo() {
         return codigo;
     }
 
-    public void setCodigo(Long codigo) {
+    public void setCodigo(String codigo) {
         this.codigo = codigo;
     }
 
@@ -47,7 +54,7 @@ public class Hospital  {
     }
 
     @Column(unique = true, nullable = false)
-    private Long codigo;
+    private String codigo;
 
     //evitar que se repitan los datos del Medico muchas veces en la respuesta (por ejemplo, al incluir el Hospital que a su vez tiene más Medico),
     @OneToMany(mappedBy = "hospital", cascade = CascadeType.ALL, orphanRemoval = true)

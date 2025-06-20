@@ -5,7 +5,7 @@ import com.flowreserve.demo1.exceptions.CustomExceptions;
 import com.flowreserve.demo1.model.Medico.Medico;
 import com.flowreserve.demo1.repository.Medico.MedicoRepository;
 import jakarta.persistence.EntityNotFoundException;
-import jdk.swing.interop.SwingInterOpUtils;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

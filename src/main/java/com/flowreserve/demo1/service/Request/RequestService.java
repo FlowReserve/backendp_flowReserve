@@ -31,6 +31,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -41,6 +42,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 @RequiredArgsConstructor
@@ -60,6 +62,9 @@ public class RequestService {
 
     @Value("${ROOT_PATH}")
     private String rootPath;
+
+    @Value("${PRODUCCION_PATH}")
+    private String produccionPath;
 
     @Transactional
     public String crearRequestConArchivos(RequestDTO dto, MultipartFile archivoZip) throws IOException {
@@ -84,7 +89,7 @@ public class RequestService {
 
 
         String codigoHospital = medico.getHospital().getCodigo();// ej: "CHUS"
-        String codigoGenerado = codigoHospital + "_REQ-" + Long.toString(System.currentTimeMillis(), 36).toUpperCase();
+        String codigoGenerado = "REQ-" + Long.toString(System.currentTimeMillis(), 36).toUpperCase() + "_" + codigoHospital;
         request.setCodigo(codigoGenerado);
         String codigoRequest = request.getCodigo();
         // Si hay archivo ZIP
@@ -97,9 +102,14 @@ public class RequestService {
             Files.createDirectories(carpetaDestino);
 
             // Guardar ZIP con nombre = codigoRequest.zip
-            String nombreArchivoZip = nombreCarpeta + ".zip";
+            String nombreArchivoZip = archivoZip.getOriginalFilename();
             Path rutaArchivoZip = carpetaDestino.resolve(nombreArchivoZip);
-            Files.write(rutaArchivoZip, archivoZip.getBytes());
+            Files.copy(archivoZip.getInputStream(), rutaArchivoZip, StandardCopyOption.REPLACE_EXISTING);
+
+            // ✅ Descomprimir
+            descomprimirZip(rutaArchivoZip, carpetaDestino);
+
+
 
             // Guardar ruta relativa en la BD
             Path rutaRelativa = Paths.get(nombreCarpeta, nombreArchivoZip);
@@ -110,15 +120,73 @@ public class RequestService {
                     + "Presión diastólica: " + dto.getPresionDiastolica() + "\n"
                     + "Comentarios: " + dto.getComentarios();
 
-            String nombreArchivoTxt = "info_" + nombreCarpeta + ".txt";
+            String nombreArchivoTxt = "txt_" + nombreCarpeta + ".txt";
             Path rutaArchivoTxt = carpetaDestino.resolve(nombreArchivoTxt);
             Files.writeString(rutaArchivoTxt, contenidoTxt, StandardCharsets.UTF_8);
+
+  /*
+            if (produccionPath != null && !produccionPath.isBlank()) {
+                Path carpetaProduccion = Paths.get(produccionPath, nombreCarpeta, "request");
+                Files.createDirectories(carpetaProduccion);
+
+                // Copiar ZIP
+                Path destinoZip = carpetaProduccion.resolve(rutaArchivoZip.getFileName());
+                Files.copy(rutaArchivoZip, destinoZip, StandardCopyOption.REPLACE_EXISTING);
+
+                // Copiar TXT
+                Path destinoTxt = carpetaProduccion.resolve(rutaArchivoTxt.getFileName());
+                Files.copy(rutaArchivoTxt, destinoTxt, StandardCopyOption.REPLACE_EXISTING);
+
+                System.out.println("ZIP y TXT copiados a producción:");
+                System.out.println("ZIP -> " + destinoZip.toString());
+                System.out.println("TXT -> " + destinoTxt.toString());
+                descomprimirZip(destinoZip, carpetaProduccion);
+            }
+
+                */
+
         }
 
         // Guardar request actualizado
         requestRepository.save(request);
         return request.getCodigo();
     }
+
+    public void descomprimirZip(Path zipPath, Path destino) throws IOException {
+        try (ZipInputStream zis = new ZipInputStream(Files.newInputStream(zipPath))) {
+            ZipEntry entry;
+            byte[] buffer = new byte[4096];  // Buffer para lectura segura
+
+            while ((entry = zis.getNextEntry()) != null) {
+                Path archivoDestino = destino.resolve(entry.getName()).normalize();
+
+                // ✅ Seguridad: evitar que escriban fuera de la carpeta destino
+                if (!archivoDestino.startsWith(destino)) {
+                    throw new IOException("Entrada ZIP no válida: " + entry.getName());
+                }
+
+                if (entry.isDirectory()) {
+                    Files.createDirectories(archivoDestino);
+                } else {
+                    Files.createDirectories(archivoDestino.getParent());
+                    try (OutputStream fos = Files.newOutputStream(archivoDestino)) {
+                        int len;
+                        while ((len = zis.read(buffer)) > 0) {
+                            fos.write(buffer, 0, len);
+                        }
+                    }
+                }
+
+                zis.closeEntry();
+            }
+        }
+    }
+
+
+
+
+
+
     // faltara meter carpeta asociada previo mandar los 2 archivos a response
     public List<String> obtenerZipCompleto(Long requestId) throws IOException {
         Request request = requestRepository.findById(requestId)

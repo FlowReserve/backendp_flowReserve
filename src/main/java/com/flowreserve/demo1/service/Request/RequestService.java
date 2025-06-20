@@ -107,7 +107,7 @@ public class RequestService {
             Files.copy(archivoZip.getInputStream(), rutaArchivoZip, StandardCopyOption.REPLACE_EXISTING);
 
             // ✅ Descomprimir
-            descomprimirZip(rutaArchivoZip, carpetaDestino);
+        //    descomprimirZip(rutaArchivoZip, carpetaDestino);
 
 
 
@@ -124,7 +124,7 @@ public class RequestService {
             Path rutaArchivoTxt = carpetaDestino.resolve(nombreArchivoTxt);
             Files.writeString(rutaArchivoTxt, contenidoTxt, StandardCharsets.UTF_8);
 
-  /*
+
             if (produccionPath != null && !produccionPath.isBlank()) {
                 Path carpetaProduccion = Paths.get(produccionPath, nombreCarpeta, "request");
                 Files.createDirectories(carpetaProduccion);
@@ -143,7 +143,7 @@ public class RequestService {
                 descomprimirZip(destinoZip, carpetaProduccion);
             }
 
-                */
+
 
         }
 

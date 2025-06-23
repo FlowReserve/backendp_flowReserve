@@ -65,21 +65,26 @@ public interface RequestRepository extends JpaRepository<Request, Long> {
 
  @Query("""
     SELECT new com.flowreserve.demo1.dto.Paciente.PacienteEstadisticasDTO(
-        COUNT(r),
-        COALESCE(SUM(CASE WHEN r.state = 'EN_PROCESO' THEN 1 ELSE 0 END), 0),
-        COALESCE(SUM(CASE WHEN r.state = 'COMPLETADA' THEN 1 ELSE 0 END), 0),
-        COALESCE(SUM(CASE WHEN r.state = 'PENDIENTE' THEN 1 ELSE 0 END), 0),
-        COALESCE(SUM(CASE WHEN r.state = 'CANCELADA' THEN 1 ELSE 0 END), 0)
+        COUNT(DISTINCT r),
+        SUM(CASE WHEN er.state = 'EN_PROCESO' THEN 1 ELSE 0 END),
+        SUM(CASE WHEN er.state = 'COMPLETADA' THEN 1 ELSE 0 END),
+        SUM(CASE WHEN er.state = 'PENDIENTE' THEN 1 ELSE 0 END),
+        SUM(CASE WHEN er.state = 'CANCELADA' THEN 1 ELSE 0 END)
     )
     FROM Request r
-    WHERE r.medico.id = :medicoId AND r.paciente.id = :pacienteId
+    JOIN EstadoRequest er ON er.request = r
+    WHERE r.medico.id = :medicoId
+      AND r.paciente.id = :pacienteId
+      AND er.fechaCambio = (
+          SELECT MAX(er2.fechaCambio)
+          FROM EstadoRequest er2
+          WHERE er2.request.id = r.id
+      )
 """)
  PacienteEstadisticasDTO getEstadisticasConsultasByPaciente(
          @Param("medicoId") Long medicoId,
          @Param("pacienteId") Long pacienteId
  );
-
-
 
 
 }

@@ -167,7 +167,7 @@ public class RequestController {
                 @RequestParam(defaultValue = "0") int page,
                 @RequestParam(defaultValue = "10") int size,
                 @RequestParam(defaultValue = "id") String sortBy,
-                @RequestParam(defaultValue = "asc") String sortDir) {
+                @RequestParam(defaultValue = "desc") String sortDir) {
             // Limitar tamaño de página a 25
             int pageSize = Math.min(size, 25);
 

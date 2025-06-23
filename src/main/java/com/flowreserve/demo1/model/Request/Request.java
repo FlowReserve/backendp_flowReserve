@@ -1,6 +1,7 @@
 package com.flowreserve.demo1.model.Request;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.flowreserve.demo1.model.Estado.EstadoRequest;
 import com.flowreserve.demo1.model.Medico.Medico;
 import com.flowreserve.demo1.model.Paciente.Paciente;
 import com.flowreserve.demo1.model.Response.Response;
@@ -8,6 +9,9 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -39,7 +43,11 @@ public class Request {
     private LocalDateTime date;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private EstadoSolicitudEnum state;
+
+    @OneToMany(mappedBy = "request", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<EstadoRequest> estados = new ArrayList<>();
 
     private int presionSistolica;
     private int presionDiastolica;

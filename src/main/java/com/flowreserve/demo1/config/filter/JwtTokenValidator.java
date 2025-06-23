@@ -37,6 +37,17 @@ public class JwtTokenValidator extends OncePerRequestFilter {
                                     @NonNull HttpServletResponse response,
                                     @NonNull FilterChain filterChain) throws ServletException, IOException {
 
+
+        String path = request.getRequestURI();
+        if (path.startsWith("/api/v1/basic-secure/")) {
+            filterChain.doFilter(request, response); // ⚠️ No aplicar JWT aquí
+            return;
+        }
+
+
+
+
+
         String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {

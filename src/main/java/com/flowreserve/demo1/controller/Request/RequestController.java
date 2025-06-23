@@ -220,7 +220,7 @@ public class RequestController {
     }
 
     /**
-     * Permite obtener la información de estadísticas de consultas realizadas por un paciente
+     * Permite obtener la información de estadísticas de consultas realizadas por un médico
      * @param id identificador del usuario sobre el que se quieren ver las consultas realizadas.
      * @return ResponseEntity con todas las consultas que ha realizado.
      */

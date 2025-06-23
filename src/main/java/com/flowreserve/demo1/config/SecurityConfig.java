@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -40,7 +41,8 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .cors(cors -> {})
+                .cors(cors -> {
+                })
                 .csrf(csrf -> csrf.disable())
                 .httpBasic(Customizer.withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -50,17 +52,16 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/invitaciones/**").permitAll()
                         .requestMatchers("/api/v1/medicos/**").permitAll()
                         .requestMatchers("/api/v1/pacientes/**").hasRole("DOCTOR")
-                        .requestMatchers(HttpMethod.POST,"/Auth/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/Auth/**").permitAll()
                         .requestMatchers("/api/v1/solicitudes/**").authenticated() //
                         //.anyRequest().authenticated()
                         .anyRequest().permitAll()
                 )
-                        .exceptionHandling(exception -> exception
+                .exceptionHandling(exception -> exception
                         .accessDeniedHandler(accessDeniedHandler())
                         .authenticationEntryPoint(authenticationEntryPoint())
-                        )
+                )
                 .addFilterBefore(new JwtTokenValidator(jwtUtils), BasicAuthenticationFilter.class);
-
 
 
         return http.build();
@@ -119,7 +120,19 @@ public class SecurityConfig {
         };
     }
 
+    @Bean
+    @Order(1)
+    public SecurityFilterChain basicAuthFilterChain(HttpSecurity http) throws Exception {
+        http
+                .securityMatcher("/api/v1/basic-secure/**") // solo aplica a esta ruta
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(auth -> auth
+                        .anyRequest().authenticated()
+                )
+                .httpBasic(Customizer.withDefaults()); // 🔐 Activar Basic Auth
 
+        return http.build();
+    }
 
 
 

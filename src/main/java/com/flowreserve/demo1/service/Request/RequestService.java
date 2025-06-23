@@ -1,13 +1,17 @@
 package com.flowreserve.demo1.service.Request;
 
+import com.flowreserve.demo1.dto.EstadoRequest.EstadoRequestDTO;
 import com.flowreserve.demo1.dto.Medico.MedicoEstadisticasDTO;
 import com.flowreserve.demo1.dto.Request.RequestDTO;
 import com.flowreserve.demo1.exceptions.CustomExceptions;
+import com.flowreserve.demo1.mapper.EstadoRequestMapper;
 import com.flowreserve.demo1.mapper.RequestMapper;
+import com.flowreserve.demo1.model.Estado.EstadoRequest;
 import com.flowreserve.demo1.model.Medico.Medico;
 import com.flowreserve.demo1.model.Paciente.Paciente;
 import com.flowreserve.demo1.model.Request.EstadoSolicitudEnum;
 import com.flowreserve.demo1.model.Request.Request;
+import com.flowreserve.demo1.repository.EstadoRequest.EstadoRequestRepository;
 import com.flowreserve.demo1.repository.Hospital.HospitalRepository;
 import com.flowreserve.demo1.repository.Medico.MedicoRepository;
 import com.flowreserve.demo1.repository.Paciente.PacienteRepository;
@@ -58,7 +62,7 @@ public class RequestService {
     private final PacienteRepository pacienteRepository;
     private final RequestMapper requestMapper;
     private final HospitalRepository hospitalRepository;
-
+    private final EstadoRequestMapper estadoRequestMapper;
 
     @Value("${ROOT_PATH}")
     private String rootPath;
@@ -76,6 +80,17 @@ public class RequestService {
         Medico medico = medicoService.findByEmail(emailMedico);
 
 
+// Crear estado inicial
+        EstadoRequestDTO estadoDTO = new EstadoRequestDTO();
+        estadoDTO.setEstado(EstadoSolicitudEnum.PENDIENTE);
+        estadoDTO.setComentarios("Solicitud creada automáticamente");
+
+        EstadoRequest estadoInicial = estadoRequestMapper.toEstadoRequestModel(estadoDTO);
+        estadoInicial.setFechaCambio(LocalDateTime.now());
+        estadoInicial.setRequest(request);
+
+// Agregar estado a la lista
+        request.getEstados().add(estadoInicial);
         request.setMedico(medico);
 
         Paciente paciente = pacienteService.findById(dto.getIdPaciente());
@@ -83,9 +98,7 @@ public class RequestService {
 
         // Fecha y estado
         request.setDate(LocalDateTime.now());
-        request.setState(EstadoSolicitudEnum.PENDIENTE);
-
-
+         request.setState(EstadoSolicitudEnum.PENDIENTE);
 
 
         String codigoHospital = medico.getHospital().getCodigo();// ej: "CHUS"
@@ -95,7 +108,7 @@ public class RequestService {
         // Si hay archivo ZIP
         if (!archivoZip.isEmpty()) {
 
-            String nombreCarpeta =  codigoRequest;
+            String nombreCarpeta = codigoRequest;
 
 
             Path carpetaDestino = Paths.get(rootPath, nombreCarpeta, "request");
@@ -107,8 +120,7 @@ public class RequestService {
             Files.copy(archivoZip.getInputStream(), rutaArchivoZip, StandardCopyOption.REPLACE_EXISTING);
 
             // ✅ Descomprimir
-        //    descomprimirZip(rutaArchivoZip, carpetaDestino);
-
+            //    descomprimirZip(rutaArchivoZip, carpetaDestino);
 
 
             // Guardar ruta relativa en la BD
@@ -116,9 +128,7 @@ public class RequestService {
             request.setNombreArchivoZip(rutaRelativa.toString());
 
             // Crear archivo .txt con presiones y comentarios
-            String contenidoTxt = "Presión Sistólica: " + dto.getPresionSistolica() + "\n"
-                    + "Presión diastólica: " + dto.getPresionDiastolica() + "\n"
-                    + "Comentarios: " + dto.getComentarios();
+            String contenidoTxt = "Presión Sistólica: " + dto.getPresionSistolica() + "\n" + "Presión diastólica: " + dto.getPresionDiastolica() + "\n" + "Comentarios: " + dto.getComentarios();
 
             String nombreArchivoTxt = "txt_" + nombreCarpeta + ".txt";
             Path rutaArchivoTxt = carpetaDestino.resolve(nombreArchivoTxt);
@@ -142,7 +152,6 @@ public class RequestService {
                 System.out.println("TXT -> " + destinoTxt.toString());
                 descomprimirZip(destinoZip, carpetaProduccion);
             }
-
 
 
         }
@@ -183,14 +192,9 @@ public class RequestService {
     }
 
 
-
-
-
-
     // faltara meter carpeta asociada previo mandar los 2 archivos a response
     public List<String> obtenerZipCompleto(Long requestId) throws IOException {
-        Request request = requestRepository.findById(requestId)
-                .orElseThrow(() -> new FileNotFoundException("Request no encontrado"));
+        Request request = requestRepository.findById(requestId).orElseThrow(() -> new FileNotFoundException("Request no encontrado"));
 
         String rutaZipRelativa = request.getNombreArchivoZip();
         if (rutaZipRelativa == null || rutaZipRelativa.isEmpty()) {
@@ -227,7 +231,6 @@ public class RequestService {
     }
 
 
-
     private void agregarArchivoAlZip(Path archivo, String nombreEnZip, ZipOutputStream zipOut) throws IOException {
         try (InputStream in = Files.newInputStream(archivo)) {
             ZipEntry zipEntry = new ZipEntry(nombreEnZip);
@@ -242,31 +245,28 @@ public class RequestService {
         }
     }
 
-    public Page<Request> listarRequestsByMedico(Pageable pageable){
-
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String email= auth.getName();
-
-        Medico medico = medicoRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Doctor no encontrado"));
-
-        return requestRepository.findByMedicoId(medico.getId(),pageable);
-    }
-
-    public Page <Request> listarRequestByPaciente(Long pacienteId, Pageable pageable){
+    public Page<Request> listarRequestsByMedico(Pageable pageable) {
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String email = auth.getName();
 
-        Medico medico = medicoRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Doctor no encontrado"));
+        Medico medico = medicoRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("Doctor no encontrado"));
+
+        return requestRepository.findByMedicoId(medico.getId(), pageable);
+    }
+
+    public Page<Request> listarRequestByPaciente(Long pacienteId, Pageable pageable) {
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = auth.getName();
+
+        Medico medico = medicoRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("Doctor no encontrado"));
 
 
-        Paciente paciente = pacienteRepository.findById(pacienteId)
-                .orElseThrow(() -> new RuntimeException("Paciente no encontrado"));
+        Paciente paciente = pacienteRepository.findById(pacienteId).orElseThrow(() -> new RuntimeException("Paciente no encontrado"));
 
-            if (!paciente.getMedico().getId().equals(medico.getId())) {
-                throw new AccessDeniedException("No tienes acceso a las solicitudes de este paciente");
+        if (!paciente.getMedico().getId().equals(medico.getId())) {
+            throw new AccessDeniedException("No tienes acceso a las solicitudes de este paciente");
 
         }
 
@@ -287,20 +287,39 @@ public class RequestService {
      * @param nuevoEstado nuevo estado que se le quiere añadir a la consulta.
      * @Return Request actualizado con el nuevo estado.
      */
+    @Transactional
     public Request cambiarEstado(Long requestID, EstadoSolicitudEnum nuevoEstado) {
 
-        Request request = requestRepository.findById(requestID)
-                .orElseThrow(() -> new RuntimeException("Request no encontrada"));
+        // ✅ Cargar el request con la lista de estados ya cargada (no lazy)
+        Request request = requestRepository.findByIdWithEstados(requestID).orElseThrow(() -> new RuntimeException("Request no encontrada"));
 
-        if (request.getState() == EstadoSolicitudEnum.COMPLETADA) {
+        EstadoSolicitudEnum estadoActual = null;
+
+        List<EstadoRequest> estados = request.getEstados();
+
+        if (estados != null && !estados.isEmpty()) {
+            estadoActual = estados.get(estados.size() - 1).getState();
+        }
+
+        if (EstadoSolicitudEnum.COMPLETADA.equals(estadoActual)) {
             throw new CustomExceptions.UnmodifiableRequestException("No se puede cambiar una solicitud completada.");
         }
 
+        // Crear nuevo EstadoRequest
+        EstadoRequest nuevoEstadoRequest = EstadoRequest.builder().state(nuevoEstado).fechaCambio(LocalDateTime.now()).comentarios("Cambio de estado manual") // puedes parametrizar si quieres
+                .request(request).build();
+
+        // ✅ Agregar el nuevo estado
+        request.getEstados().add(nuevoEstadoRequest);
+
         request.setState(nuevoEstado);
-        requestRepository.save(request);
-        return request;
+
+
+        // ✅ Guardar request (guarda también los estados por cascade)
+        return requestRepository.save(request);
     }
 
+/*
     public Map<String, Long> obtenerResumenConsultasPorMedico(Long medicoId) {
         Long total = requestRepository.countTotalByMedico(medicoId);
         Long enCurso = requestRepository.countEnCursoByMedico(medicoId);
@@ -317,9 +336,11 @@ public class RequestService {
 
         return resumen;
     }
+*/
 
     /**
      * Obtiene las estadisticas de un medico bajo una unica consulta SQL
+     *
      * @param medicoId identificador del medico sobre el que se quiere realizar la consulta.
      * @return
      */

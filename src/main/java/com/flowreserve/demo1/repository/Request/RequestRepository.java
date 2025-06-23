@@ -1,6 +1,7 @@
 package com.flowreserve.demo1.repository.Request;
 
 import com.flowreserve.demo1.dto.Medico.MedicoEstadisticasDTO;
+import com.flowreserve.demo1.model.Request.EstadoSolicitudEnum;
 import com.flowreserve.demo1.model.Request.Request;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -9,6 +10,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface RequestRepository extends JpaRepository<Request, Long> {
@@ -63,6 +65,14 @@ public interface RequestRepository extends JpaRepository<Request, Long> {
  MedicoEstadisticasDTO getEstadisticasByMedico(@Param("medicoId") Long medicoId);
 
 
-
+ @Query("""
+    SELECT DISTINCT r FROM Request r
+    JOIN r.estados e
+    WHERE e.fechaCambio = (
+        SELECT MAX(e2.fechaCambio) FROM EstadoRequest e2 WHERE e2.request = r
+    )
+    AND e.state = :estado
+""")
+ List<Request> findByUltimoEstado(@Param("estado") EstadoSolicitudEnum estado);
 
 }

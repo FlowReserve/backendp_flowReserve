@@ -9,6 +9,7 @@ import com.flowreserve.demo1.dto.Request.ResponseRequestEstadoUpdateDTO;
 import com.flowreserve.demo1.dto.global.ApiResponseDTO;
 import com.flowreserve.demo1.mapper.RequestMapper;
 import com.flowreserve.demo1.model.Medico.Medico;
+import com.flowreserve.demo1.model.Request.EstadoSolicitudEnum;
 import com.flowreserve.demo1.model.Request.Request;
 import com.flowreserve.demo1.service.Medico.MedicoService;
 import com.flowreserve.demo1.service.Request.RequestService;
@@ -186,7 +187,7 @@ public class RequestController {
         return ApiResponseDTO.success("Estado de la solicitud actualizado correctamente", responseRequestEstadoUpdateDTO, HttpStatus.OK);
     }
 
-
+   // copia los archivos de request a response para poder trabajar con ellos a partir de un boton valorar si es necesario
     //@PreAuthorize("hasAnyRole('ADMIN', 'DEVELOPER')")
     @GetMapping("/{id}/archivo")
     public ResponseEntity<?> procesarArchivos(@PathVariable Long id) {
@@ -217,5 +218,26 @@ public class RequestController {
         MedicoEstadisticasDTO medicoEstadisticasDTO = requestService.obtenerResumenConsultasPorMedicoOptimized(medico.getId());
         return ApiResponseDTO.success("Estadísticas de médico encontradas con éxito", medicoEstadisticasDTO, HttpStatus.OK);
     }
+
+    //cambiar estado de request basic auth
+    @PreAuthorize("hasAnyRole('ADMIN', 'DEVELOPER')")
+    @GetMapping("/estado-actual")
+    public ResponseEntity<ApiResponseDTO<List<RequestResponseDTO>>> getRequestsPorUltimoEstado(
+            @RequestParam("estado") EstadoSolicitudEnum estado) {
+
+        List<Request> requests = requestService.obtenerRequestsPorUltimoEstado(estado);
+        List<RequestResponseDTO> dtoList = requests.stream()
+                .map(requestMapper::toRequestResponseDTO)
+                .toList();
+
+        return ApiResponseDTO.success(
+                "Solicitudes con último estado = " + estado + " recuperadas correctamente",
+                dtoList,
+                HttpStatus.OK
+        );
+    }
+
+
+
 
 }

@@ -39,6 +39,7 @@ public class SecurityConfig {
 
     // Configuración de seguridad HTTP
     @Bean
+    @Order(2)
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .cors(cors -> {
@@ -124,12 +125,17 @@ public class SecurityConfig {
     @Order(1)
     public SecurityFilterChain basicAuthFilterChain(HttpSecurity http) throws Exception {
         http
-                .securityMatcher("/api/v1/basic-secure/**") // solo aplica a esta ruta
+                .securityMatcher("/api/v1/**") // ⬅️ Aplica Basic Auth a cualquier ruta bajo /api/v1
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .anyRequest().authenticated()
+                        .requestMatchers(
+                                "/api/v1/basic-secure/**",
+                                "/api/v1/solicitudes/estado-actual",
+                                "/api/v1/solicitudes/*/estado"  // ⬅️ incluye el PUT /{id}/estado
+                        ).authenticated()
+                        .anyRequest().permitAll()
                 )
-                .httpBasic(Customizer.withDefaults()); // 🔐 Activar Basic Auth
+                .httpBasic(Customizer.withDefaults());
 
         return http.build();
     }

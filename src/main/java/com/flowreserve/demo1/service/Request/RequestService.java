@@ -325,4 +325,8 @@ public class RequestService {
     }
 
 
+    public List<Request> obtenerRequestsPorUltimoEstado(EstadoSolicitudEnum estado) {
+        return requestRepository.findByUltimoEstado(estado);
+    }
+
 }

@@ -121,24 +121,24 @@ public class SecurityConfig {
         };
     }
 
-    @Bean
-    @Order(1)
-    public SecurityFilterChain basicAuthFilterChain(HttpSecurity http) throws Exception {
-        http
-                .securityMatcher("/api/v1/**") // ⬅️ Aplica Basic Auth a cualquier ruta bajo /api/v1
-                .csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(
-                                "/api/v1/basic-secure/**",
-                                "/api/v1/solicitudes/estado-actual",
-                                "/api/v1/solicitudes/*/estado"  // ⬅️ incluye el PUT /{id}/estado
-                        ).authenticated()
-                        .anyRequest().permitAll()
-                )
-                .httpBasic(Customizer.withDefaults());
-
-        return http.build();
-    }
+//    @Bean
+//    @Order(1)
+//    public SecurityFilterChain basicAuthFilterChain(HttpSecurity http) throws Exception {
+//        http
+//                .securityMatcher("/api/v1/**") // ⬅️ Aplica Basic Auth a cualquier ruta bajo /api/v1
+//                .csrf(csrf -> csrf.disable())
+//                .authorizeHttpRequests(auth -> auth
+//                        .requestMatchers(
+//                                "/api/v1/basic-secure/**",
+//                                "/api/v1/solicitudes/estado-actual",
+//                                "/api/v1/solicitudes/*/estado"  // ⬅️ incluye el PUT /{id}/estado
+//                        ).authenticated()
+//                        .anyRequest().permitAll()
+//                )
+//                .httpBasic(Customizer.withDefaults());
+//
+//        return http.build();
+//    }
 
 
 

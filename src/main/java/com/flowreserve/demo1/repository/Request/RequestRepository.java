@@ -89,14 +89,24 @@ public interface RequestRepository extends JpaRepository<Request, Long> {
  );
 
 
+ /**
+  * Devuelve listado de consultas
+  * @param estado
+  * @return
+  */
  @Query("""
-    SELECT DISTINCT r FROM Request r
-    JOIN r.estados e
-    WHERE e.fechaCambio = (
-        SELECT MAX(e2.fechaCambio) FROM EstadoRequest e2 WHERE e2.request = r
-    )
-    AND e.state = :estado
-""")
+         SELECT DISTINCT r FROM Request r
+         JOIN FETCH r.medico m
+         JOIN FETCH r.paciente p
+         LEFT JOIN FETCH r.response resp
+         JOIN FETCH r.estados e
+         WHERE e.fechaCambio = (
+             SELECT MAX(e2.fechaCambio)
+             FROM EstadoRequest e2
+             WHERE e2.request = r
+         )
+         AND e.state = :estado
+         """)
  List<Request> findByUltimoEstado(@Param("estado") EstadoSolicitudEnum estado);
 
 }

@@ -10,7 +10,9 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -47,7 +49,7 @@ public class Request {
     private EstadoSolicitudEnum state;
 
     @OneToMany(mappedBy = "request", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<EstadoRequest> estados = new ArrayList<>();
+    private Set<EstadoRequest> estados = new HashSet<>();
 
     private int presionSistolica;
     private int presionDiastolica;
@@ -56,8 +58,5 @@ public class Request {
     private String codigo;
     private String lesiones;
     private String lesionesPersonalizadas;
-
-
-
 
 }

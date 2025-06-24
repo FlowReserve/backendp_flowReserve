@@ -18,7 +18,15 @@ public class EstadoRequestMapper {
                 .fechaCambio(estadoRequestDTO.getFechaCambio())
                 .comentarios(estadoRequestDTO.getComentarios())
                 .state(estadoRequestDTO.getEstado())
+                .build();
+    }
 
+    public EstadoRequestDTO estadoRequestDTO(EstadoRequest estadoRequest){
+        if(estadoRequest == null) return null;
+        return EstadoRequestDTO.builder()
+                .estado(estadoRequest.getState())
+                .comentarios(estadoRequest.getComentarios())
+                .fechaCambio(estadoRequest.getFechaCambio())
                 .build();
     }
 

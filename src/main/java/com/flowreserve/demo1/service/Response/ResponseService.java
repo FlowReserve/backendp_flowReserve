@@ -90,7 +90,10 @@ public class ResponseService {
                 .request(request)
                 .build();
 
-        request.getEstados().add(nuevoEstado);  //con transacccional no hay que guardar 2 veces
+        request.getEstados().add(nuevoEstado);
+        request.setState(EstadoSolicitudEnum.COMPLETADA);
+
+        //con transacccional no hay que guardar 2 veces
         requestRepository.save(request);
     }
 

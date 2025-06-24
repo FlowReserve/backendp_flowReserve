@@ -9,6 +9,7 @@ import com.flowreserve.demo1.model.role.RoleModel;
 import com.flowreserve.demo1.repository.Invitacion.InvitacionRepository;
 import com.flowreserve.demo1.repository.Medico.MedicoRepository;
 import com.flowreserve.demo1.repository.RoleRepository;
+import com.flowreserve.demo1.service.Email.EmailService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -29,7 +30,7 @@ public class MedicoService {
     private final PasswordEncoder passwordEncoder;
     private final MedicoMapper medicoMapper;
     private final InvitacionRepository invitacionRepository;
-
+    private final EmailService emailService;
 
 
 
@@ -54,6 +55,14 @@ public Medico crearMedicoDesdeInvitacion(MedicoDTO medicoDTO) {
 invitacion.setMedico(medico);
 invitacion.setUsada(true);
 invitacionRepository.save(invitacion);
+    // 2. Envío de email de bienvenida
+    emailService.enviarCorreo(
+            medico.getEmail(),
+            "¡Bienvenido a nuestra app!",
+            "Hola " + medico.getNombre() + ", gracias por registrarte 😊"
+    );
+
+
 
 return medico;
 }

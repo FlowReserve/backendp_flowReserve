@@ -56,11 +56,11 @@ invitacion.setMedico(medico);
 invitacion.setUsada(true);
 invitacionRepository.save(invitacion);
     // 2. Envío de email de bienvenida
-    emailService.enviarCorreo(
-            medico.getEmail(),
-            "¡Bienvenido a nuestra app!",
-            "Hola " + medico.getNombre() + ", gracias por registrarte 😊"
-    );
+//    emailService.enviarCorreo(
+//            medico.getEmail(),
+//            "¡Bienvenido a nuestra app!",
+//            "Hola " + medico.getNombre() + ", gracias por registrarte 😊"
+//    );
 
 
 

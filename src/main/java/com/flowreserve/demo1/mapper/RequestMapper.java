@@ -6,6 +6,7 @@ import com.flowreserve.demo1.dto.Request.ResponseRequestEstadoUpdateDTO;
 import com.flowreserve.demo1.model.Request.EstadoSolicitudEnum;
 import com.flowreserve.demo1.model.Request.Request;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -14,7 +15,8 @@ import java.util.ArrayList;
 @Component
 public class RequestMapper {
     private final PacienteMapper pacienteMapper;
-
+    @Value("${ROOT_PATH}")
+    private String rootPath;
 
     public Request toRequestModel(RequestDTO requestDTO) {
         if (requestDTO == null) return null;
@@ -45,7 +47,7 @@ public class RequestMapper {
                 .presionSistolica(request.getPresionSistolica())
                 .presionDiastolica(request.getPresionDiastolica())
                 .comentarios(request.getComentarios())
-                .nombreArchivoZip(request.getNombreArchivoZip())
+                .nombreArchivoZip(rootPath + request.getNombreArchivoZip())
                 .paciente(pacienteMapper.toPacienteResponseDTO(request.getPaciente()))
                 .build();
     }

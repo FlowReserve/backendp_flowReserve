@@ -114,7 +114,7 @@ public class RequestService {
             Files.createDirectories(carpetaDestino);
 
             // Guardar ZIP con nombre = codigoRequest.zip
-            String nombreArchivoZip = codigoRequest + ".zip";
+            String nombreArchivoZip =  codigoRequest + ".zip";
             Path rutaArchivoZip = carpetaDestino.resolve(nombreArchivoZip);
             Files.copy(archivoZip.getInputStream(), rutaArchivoZip, StandardCopyOption.REPLACE_EXISTING);
 
@@ -123,7 +123,7 @@ public class RequestService {
 
 
             // Guardar ruta relativa en la BD
-            Path rutaRelativa = Paths.get(nombreCarpeta, nombreArchivoZip);
+            Path rutaRelativa = Paths.get(nombreCarpeta, "request", nombreArchivoZip);
             request.setNombreArchivoZip(rutaRelativa.toString());
 
             // Crear archivo .txt con presiones y comentarios

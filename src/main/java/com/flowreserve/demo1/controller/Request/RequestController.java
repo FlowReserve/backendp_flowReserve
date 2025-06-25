@@ -13,7 +13,9 @@ import com.flowreserve.demo1.model.Request.EstadoSolicitudEnum;
 import com.flowreserve.demo1.model.Request.Request;
 import com.flowreserve.demo1.service.Medico.MedicoService;
 import com.flowreserve.demo1.service.Request.RequestService;
+import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Valid;
+import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -39,6 +41,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -52,6 +55,7 @@ public class RequestController {
     private  final RequestMapper requestMapper;
     private final MedicoService medicoService;
     private final ObjectMapper objectMapper;
+    private final Validator validator;
 
     /**
      * Crea una nueva solicitud de consulta a un paciente en la base de datos.
@@ -61,17 +65,27 @@ public class RequestController {
      */
     @PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR')")
     @PostMapping(value = "/new", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> crearRequestConArchivos(
+    public ResponseEntity<ApiResponseDTO<RequestResponseDTO>> crearRequestConArchivos(
             @RequestPart("json") String requestJson,
             @RequestPart("archivoZip") MultipartFile archivoZip) {
         try {
             RequestDTO requestDTO = objectMapper.readValue(requestJson, RequestDTO.class);
-            String codigo = requestService.crearRequestConArchivos(requestDTO, archivoZip);
-            return ResponseEntity.ok("Request creada con código: " + codigo);
+
+            Set<ConstraintViolation<RequestDTO>> violations = validator.validate(requestDTO);
+            if (!violations.isEmpty()) {
+                StringBuilder errorMsg = new StringBuilder();
+                for (ConstraintViolation<RequestDTO> violation : violations) {
+                    errorMsg.append(violation.getPropertyPath()).append(": ")
+                            .append(violation.getMessage()).append(". ");
+                }
+                return ApiResponseDTO.error("Error de validación: " + errorMsg, HttpStatus.BAD_REQUEST);
+            }
+
+            Request request =  requestService.crearRequestConArchivos(requestDTO, archivoZip);
+            RequestResponseDTO requestResponseDTO = requestMapper.toRequestResponseDTO(request);
+            return ApiResponseDTO.success("Solicitud de paciente creada con éxito", requestResponseDTO, HttpStatus.CREATED);
         } catch (Exception e) {
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error al crear la request: " + e.getMessage());
+            return ApiResponseDTO.error("Error inesperado al crear la solicitud: " + e, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -124,7 +138,7 @@ public class RequestController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "id") String sortBy,
-            @RequestParam(defaultValue = "asc") String sortDir) {
+            @RequestParam(defaultValue = "desc") String sortDir) {
 
         // Limitar tamaño de página a 25
         int pageSize = Math.min(size, 25);
@@ -154,7 +168,7 @@ public class RequestController {
                 @RequestParam(defaultValue = "0") int page,
                 @RequestParam(defaultValue = "10") int size,
                 @RequestParam(defaultValue = "id") String sortBy,
-                @RequestParam(defaultValue = "asc") String sortDir) {
+                @RequestParam(defaultValue = "desc") String sortDir) {
             // Limitar tamaño de página a 25
             int pageSize = Math.min(size, 25);
 
@@ -207,13 +221,13 @@ public class RequestController {
     }
 
     /**
-     * Permite obtener la información de estadísticas de consultas realizadas por un paciente
+     * Permite obtener la información de estadísticas de consultas realizadas por un médico
      * @param id identificador del usuario sobre el que se quieren ver las consultas realizadas.
      * @return ResponseEntity con todas las consultas que ha realizado.
      */
     @GetMapping("/{id}/resumen")
     public ResponseEntity<ApiResponseDTO<MedicoEstadisticasDTO>> obtenerResumen(@PathVariable Long id) {
-        //Primero valida que el medico sobre el que se quieren obtner los datos existe en la BBDD.
+        //Primero valida que el medico sobre el que se quieren obtener los datos existe en la BBDD.
         Medico medico = medicoService.findById(id);
         MedicoEstadisticasDTO medicoEstadisticasDTO = requestService.obtenerResumenConsultasPorMedicoOptimized(medico.getId());
         return ApiResponseDTO.success("Estadísticas de médico encontradas con éxito", medicoEstadisticasDTO, HttpStatus.OK);

@@ -1,8 +1,10 @@
 package com.flowreserve.demo1.service.Paciente;
 
 import com.flowreserve.demo1.dto.Paciente.PacienteDTO;
+import com.flowreserve.demo1.dto.Paciente.PacienteEstadisticasDTO;
 import com.flowreserve.demo1.mapper.PacienteMapper;
 import com.flowreserve.demo1.repository.Medico.MedicoRepository;
+import com.flowreserve.demo1.repository.Request.RequestRepository;
 import com.flowreserve.demo1.service.Medico.MedicoService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -23,10 +25,9 @@ public class PacienteService {
 
 
     private final MedicoService medicoService;
-
-    private  final MedicoRepository medicoRepository;
-
-  private final PacienteMapper pacienteMapper;
+    private final MedicoRepository medicoRepository;
+    private final PacienteMapper pacienteMapper;
+    private final RequestRepository requestRepository;
 
 
     public Paciente crearPaciente(PacienteDTO pacienteDTO) {
@@ -81,6 +82,16 @@ public class PacienteService {
 
     public Long obtenerNumeroDePacientesDelMedico(Long medicoId) {
         return pacienteRepository.contarPacientesPorMedico(medicoId);
+    }
+
+    /**
+     * Obtiene las estadisticas de consultas de un paciente específico.
+     * @param idPaciente identificador del paciente sobre el que se quieren obtener las consultas.
+     * @param idMedico identificador del medico asociado con esas consultas.
+     * @return
+     */
+    public PacienteEstadisticasDTO obtenerEstadisticasConsultasByPacienteID(Long idMedico, Long idPaciente){
+        return requestRepository.getEstadisticasConsultasByPaciente(idMedico, idPaciente);
     }
 
 

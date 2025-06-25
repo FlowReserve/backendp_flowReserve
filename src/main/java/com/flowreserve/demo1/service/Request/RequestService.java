@@ -3,6 +3,7 @@ package com.flowreserve.demo1.service.Request;
 import com.flowreserve.demo1.dto.EstadoRequest.EstadoRequestDTO;
 import com.flowreserve.demo1.dto.Medico.MedicoEstadisticasDTO;
 import com.flowreserve.demo1.dto.Request.RequestDTO;
+import com.flowreserve.demo1.dto.Request.RequestResponseDTO;
 import com.flowreserve.demo1.exceptions.CustomExceptions;
 import com.flowreserve.demo1.mapper.EstadoRequestMapper;
 import com.flowreserve.demo1.mapper.RequestMapper;
@@ -71,12 +72,10 @@ public class RequestService {
     private String produccionPath;
 
     @Transactional
-    public String crearRequestConArchivos(RequestDTO dto, MultipartFile archivoZip) throws IOException {
-        Request request = new Request();
-
+    public Request crearRequestConArchivos(RequestDTO dto, MultipartFile archivoZip) throws IOException {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String emailMedico = auth.getName();
-        request = requestMapper.toRequestModel(dto);
+        Request request = requestMapper.toRequestModel(dto);
         Medico medico = medicoService.findByEmail(emailMedico);
 
 
@@ -115,7 +114,7 @@ public class RequestService {
             Files.createDirectories(carpetaDestino);
 
             // Guardar ZIP con nombre = codigoRequest.zip
-            String nombreArchivoZip = archivoZip.getOriginalFilename();
+            String nombreArchivoZip = codigoRequest + ".zip";
             Path rutaArchivoZip = carpetaDestino.resolve(nombreArchivoZip);
             Files.copy(archivoZip.getInputStream(), rutaArchivoZip, StandardCopyOption.REPLACE_EXISTING);
 
@@ -128,7 +127,11 @@ public class RequestService {
             request.setNombreArchivoZip(rutaRelativa.toString());
 
             // Crear archivo .txt con presiones y comentarios
-            String contenidoTxt = "Presión Sistólica: " + dto.getPresionSistolica() + "\n" + "Presión diastólica: " + dto.getPresionDiastolica() + "\n" + "Comentarios: " + dto.getComentarios();
+            String contenidoTxt = "Presión Sistólica: " + dto.getPresionSistolica() + "\n"
+                    + "Presión diastólica: " + dto.getPresionDiastolica() + "\n"
+                    + "Comentarios: " + dto.getComentarios() + "\n"
+                    + "Lesiones: " + dto.getLesiones() + "\n"
+                    + "Lesiones_personalizadas: " + dto.getLesionesPersonalizadas();
 
             String nombreArchivoTxt = "txt_" + nombreCarpeta + ".txt";
             Path rutaArchivoTxt = carpetaDestino.resolve(nombreArchivoTxt);
@@ -153,12 +156,10 @@ public class RequestService {
                 descomprimirZip(destinoZip, carpetaProduccion);
             }
 
-
         }
 
-        // Guardar request actualizado
-        requestRepository.save(request);
-        return request.getCodigo();
+        // Guardar y devolver el request actualizado
+        return  requestRepository.save(request);
     }
 
     public void descomprimirZip(Path zipPath, Path destino) throws IOException {
@@ -194,7 +195,8 @@ public class RequestService {
 
     // faltara meter carpeta asociada previo mandar los 2 archivos a response
     public List<String> obtenerZipCompleto(Long requestId) throws IOException {
-        Request request = requestRepository.findById(requestId).orElseThrow(() -> new FileNotFoundException("Request no encontrado"));
+        Request request = requestRepository.findById(requestId)
+                .orElseThrow(() -> new FileNotFoundException("Request no encontrado"));
 
         String rutaZipRelativa = request.getNombreArchivoZip();
         if (rutaZipRelativa == null || rutaZipRelativa.isEmpty()) {
@@ -231,6 +233,7 @@ public class RequestService {
     }
 
 
+
     private void agregarArchivoAlZip(Path archivo, String nombreEnZip, ZipOutputStream zipOut) throws IOException {
         try (InputStream in = Files.newInputStream(archivo)) {
             ZipEntry zipEntry = new ZipEntry(nombreEnZip);
@@ -245,28 +248,31 @@ public class RequestService {
         }
     }
 
-    public Page<Request> listarRequestsByMedico(Pageable pageable) {
+    public Page<Request> listarRequestsByMedico(Pageable pageable){
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String email = auth.getName();
+        String email= auth.getName();
 
-        Medico medico = medicoRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("Doctor no encontrado"));
+        Medico medico = medicoRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Doctor no encontrado"));
 
-        return requestRepository.findByMedicoId(medico.getId(), pageable);
+        return requestRepository.findByMedicoId(medico.getId(),pageable);
     }
 
-    public Page<Request> listarRequestByPaciente(Long pacienteId, Pageable pageable) {
+    public Page <Request> listarRequestByPaciente(Long pacienteId, Pageable pageable){
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String email = auth.getName();
 
-        Medico medico = medicoRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("Doctor no encontrado"));
+        Medico medico = medicoRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Doctor no encontrado"));
 
 
-        Paciente paciente = pacienteRepository.findById(pacienteId).orElseThrow(() -> new RuntimeException("Paciente no encontrado"));
+        Paciente paciente = pacienteRepository.findById(pacienteId)
+                .orElseThrow(() -> new RuntimeException("Paciente no encontrado"));
 
-        if (!paciente.getMedico().getId().equals(medico.getId())) {
-            throw new AccessDeniedException("No tienes acceso a las solicitudes de este paciente");
+            if (!paciente.getMedico().getId().equals(medico.getId())) {
+                throw new AccessDeniedException("No tienes acceso a las solicitudes de este paciente");
 
         }
 
@@ -290,18 +296,10 @@ public class RequestService {
     @Transactional
     public Request cambiarEstado(Long requestID, EstadoSolicitudEnum nuevoEstado) {
 
-        // ✅ Cargar el request con la lista de estados ya cargada (no lazy)
-        Request request = requestRepository.findByIdWithEstados(requestID).orElseThrow(() -> new RuntimeException("Request no encontrada"));
+        Request request = requestRepository.findById(requestID)
+                .orElseThrow(() -> new RuntimeException("Request no encontrada"));
 
-        EstadoSolicitudEnum estadoActual = null;
-
-        List<EstadoRequest> estados = request.getEstados();
-
-        if (estados != null && !estados.isEmpty()) {
-            estadoActual = estados.get(estados.size() - 1).getState();
-        }
-
-        if (EstadoSolicitudEnum.COMPLETADA.equals(estadoActual)) {
+        if (request.getState() == EstadoSolicitudEnum.COMPLETADA) {
             throw new CustomExceptions.UnmodifiableRequestException("No se puede cambiar una solicitud completada.");
         }
 
@@ -313,34 +311,12 @@ public class RequestService {
         request.getEstados().add(nuevoEstadoRequest);
 
         request.setState(nuevoEstado);
-
-
-        // ✅ Guardar request (guarda también los estados por cascade)
-        return requestRepository.save(request);
+        requestRepository.save(request);
+        return request;
     }
-
-/*
-    public Map<String, Long> obtenerResumenConsultasPorMedico(Long medicoId) {
-        Long total = requestRepository.countTotalByMedico(medicoId);
-        Long enCurso = requestRepository.countEnCursoByMedico(medicoId);
-        Long finalizadas = requestRepository.countFinalizadasByMedico(medicoId);
-        Long canceladas = requestRepository.countCanceladasByMedico(medicoId);
-        long pendientes = requestRepository.countPendientesByMedico(medicoId);
-
-        Map<String, Long> resumen = new HashMap<>();
-        resumen.put("total", total);
-        resumen.put("enCurso", enCurso);
-        resumen.put("finalizadas", finalizadas);
-        resumen.put("canceladas", canceladas);
-        resumen.put("pendientes", pendientes);
-
-        return resumen;
-    }
-*/
 
     /**
      * Obtiene las estadisticas de un medico bajo una unica consulta SQL
-     *
      * @param medicoId identificador del medico sobre el que se quiere realizar la consulta.
      * @return
      */

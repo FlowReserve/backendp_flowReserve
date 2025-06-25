@@ -13,28 +13,27 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
-
 @Entity
 
 @Inheritance(strategy = InheritanceType.JOINED) // o SINGLE_TABLE o TABLE_PER_CLASS según lo que prefieras
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String nombre;
+
     private String apellido;
+
     @Column(unique = true)
     private String email;
+
     private String password;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "user_roles_test", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<RoleModel> roleModelSet = new HashSet<>();
-
-
-
-
 
     @Column(name="is_enabled")
     private boolean isEnabled;

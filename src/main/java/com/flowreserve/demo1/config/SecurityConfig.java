@@ -42,7 +42,8 @@ public class SecurityConfig {
     @Order(2)
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .cors(cors -> {})
+                .cors(cors -> {
+                })
                 .csrf(csrf -> csrf.disable())
                 .httpBasic(Customizer.withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -52,17 +53,16 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/invitaciones/**").permitAll()
                         .requestMatchers("/api/v1/medicos/**").permitAll()
                         .requestMatchers("/api/v1/pacientes/**").hasRole("DOCTOR")
-                        .requestMatchers(HttpMethod.POST,"/Auth/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/Auth/**").permitAll()
                         .requestMatchers("/api/v1/solicitudes/**").authenticated() //
                         //.anyRequest().authenticated()
                         .anyRequest().permitAll()
                 )
-                        .exceptionHandling(exception -> exception
+                .exceptionHandling(exception -> exception
                         .accessDeniedHandler(accessDeniedHandler())
                         .authenticationEntryPoint(authenticationEntryPoint())
-                        )
+                )
                 .addFilterBefore(new JwtTokenValidator(jwtUtils), BasicAuthenticationFilter.class);
-
 
 
         return http.build();
@@ -121,24 +121,24 @@ public class SecurityConfig {
         };
     }
 
-    @Bean
-    @Order(1)
-    public SecurityFilterChain basicAuthFilterChain(HttpSecurity http) throws Exception {
-        http
-                .securityMatcher("/api/v1/**") // ⬅️ Aplica Basic Auth a cualquier ruta bajo /api/v1
-                .csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(
-                                "/api/v1/basic-secure/**",
-                                "/api/v1/solicitudes/estado-actual",
-                                "/api/v1/solicitudes/*/estado"  // ⬅️ incluye el PUT /{id}/estado
-                        ).authenticated()
-                        .anyRequest().permitAll()
-                )
-                .httpBasic(Customizer.withDefaults());
-
-        return http.build();
-    }
+//    @Bean
+//    @Order(1)
+//    public SecurityFilterChain basicAuthFilterChain(HttpSecurity http) throws Exception {
+//        http
+//                .securityMatcher("/api/v1/**") // ⬅️ Aplica Basic Auth a cualquier ruta bajo /api/v1
+//                .csrf(csrf -> csrf.disable())
+//                .authorizeHttpRequests(auth -> auth
+//                        .requestMatchers(
+//                                "/api/v1/basic-secure/**",
+//                                "/api/v1/solicitudes/estado-actual",
+//                                "/api/v1/solicitudes/*/estado"  // ⬅️ incluye el PUT /{id}/estado
+//                        ).authenticated()
+//                        .anyRequest().permitAll()
+//                )
+//                .httpBasic(Customizer.withDefaults());
+//
+//        return http.build();
+//    }
 
 
 

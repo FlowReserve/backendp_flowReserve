@@ -61,7 +61,7 @@ public class RequestMapper {
                 .nombreArchivoZip(request.getNombreArchivoZip())
                 .lesiones(request.getLesiones())
                 .lesionesPersonalizadas(request.getLesionesPersonalizadas())
-                .nombreArchivoZip(rootPath + "\\" + request.getNombreArchivoZip())
+                .nombreArchivoZip( request.getNombreArchivoZip().replace("\\", "/"))
                 .paciente(pacienteMapper.toPacienteResponseDTO(request.getPaciente()))
                 .build();
     }

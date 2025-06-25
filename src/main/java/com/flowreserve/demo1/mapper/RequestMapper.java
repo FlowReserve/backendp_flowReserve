@@ -22,9 +22,15 @@ import java.util.stream.Collectors;
 public class RequestMapper {
     private final PacienteMapper pacienteMapper;
     private final EstadoRequestMapper estadoRequestMapper;
+    private String rutaPublica;
+
 
     @Value("${ROOT_PATH}")
     private String rootPath;
+
+    @Value("${public.base-url}")
+    private String publicBaseUrl;
+
 
     public Request toRequestModel(RequestDTO requestDTO) {
         if (requestDTO == null) return null;
@@ -48,6 +54,13 @@ public class RequestMapper {
                     .collect(Collectors.toSet());
 
         }
+        String nombreArchivoZip = request.getNombreArchivoZip().replace("\\", "/");
+        int lastSlashIndex = nombreArchivoZip.lastIndexOf('/');
+
+        String carpetaContenedora = (lastSlashIndex > 0) ? nombreArchivoZip.substring(0, lastSlashIndex + 1) : "";
+// "REQ-MC8ZTAJN_1234/"
+        String rutaPublica =publicBaseUrl + carpetaContenedora ;
+
 
         return RequestResponseDTO.builder()
                 .id(request.getId())
@@ -61,6 +74,7 @@ public class RequestMapper {
                 .nombreArchivoZip(request.getNombreArchivoZip())
                 .lesiones(request.getLesiones())
                 .lesionesPersonalizadas(request.getLesionesPersonalizadas())
+                .rutaPublica(rutaPublica)
                 .nombreArchivoZip( request.getNombreArchivoZip().replace("\\", "/"))
                 .paciente(pacienteMapper.toPacienteResponseDTO(request.getPaciente()))
                 .build();

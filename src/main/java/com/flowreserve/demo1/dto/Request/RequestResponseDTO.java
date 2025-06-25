@@ -17,6 +17,7 @@ public class RequestResponseDTO {
     private Long id;
     private String codigo;
     private String nombreArchivoZip;
+    private String rutaPublica;
     private LocalDateTime date;
     private EstadoSolicitudEnum state;
     private Set<EstadoRequestDTO> listadoEstados;

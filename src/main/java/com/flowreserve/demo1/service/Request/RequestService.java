@@ -3,16 +3,14 @@ package com.flowreserve.demo1.service.Request;
 import com.flowreserve.demo1.dto.EstadoRequest.EstadoRequestDTO;
 import com.flowreserve.demo1.dto.Medico.MedicoEstadisticasDTO;
 import com.flowreserve.demo1.dto.Request.RequestDTO;
-import com.flowreserve.demo1.dto.Request.RequestResponseDTO;
 import com.flowreserve.demo1.exceptions.CustomExceptions;
 import com.flowreserve.demo1.mapper.EstadoRequestMapper;
 import com.flowreserve.demo1.mapper.RequestMapper;
-import com.flowreserve.demo1.model.Estado.EstadoRequest;
+import com.flowreserve.demo1.model.Estado.EstadoRequestMedico;
 import com.flowreserve.demo1.model.Medico.Medico;
 import com.flowreserve.demo1.model.Paciente.Paciente;
 import com.flowreserve.demo1.model.Request.EstadoSolicitudEnum;
 import com.flowreserve.demo1.model.Request.Request;
-import com.flowreserve.demo1.repository.EstadoRequest.EstadoRequestRepository;
 import com.flowreserve.demo1.repository.Hospital.HospitalRepository;
 import com.flowreserve.demo1.repository.Medico.MedicoRepository;
 import com.flowreserve.demo1.repository.Paciente.PacienteRepository;
@@ -21,10 +19,7 @@ import com.flowreserve.demo1.service.Medico.MedicoService;
 import com.flowreserve.demo1.service.Paciente.PacienteService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
@@ -43,9 +38,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -84,7 +77,7 @@ public class RequestService {
         estadoDTO.setEstado(EstadoSolicitudEnum.PENDIENTE);
         estadoDTO.setComentarios("Solicitud creada automáticamente");
 
-        EstadoRequest estadoInicial = estadoRequestMapper.toEstadoRequestModel(estadoDTO);
+        EstadoRequestMedico estadoInicial = estadoRequestMapper.toEstadoRequestModel(estadoDTO);
         estadoInicial.setFechaCambio(LocalDateTime.now());
         estadoInicial.setRequest(request);
 
@@ -304,7 +297,7 @@ public class RequestService {
         }
 
         // Crear nuevo EstadoRequest
-        EstadoRequest nuevoEstadoRequest = EstadoRequest.builder().state(nuevoEstado).fechaCambio(LocalDateTime.now()).comentarios("Cambio de estado manual") // puedes parametrizar si quieres
+        EstadoRequestMedico nuevoEstadoRequest = EstadoRequestMedico.builder().state(nuevoEstado).fechaCambio(LocalDateTime.now()).comentarios("Cambio de estado manual") // puedes parametrizar si quieres
                 .request(request).build();
 
         // ✅ Agregar el nuevo estado

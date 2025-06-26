@@ -5,7 +5,6 @@ import com.flowreserve.demo1.model.Request.EstadoSolicitudEnum;
 import com.flowreserve.demo1.model.Request.Request;
 import jakarta.persistence.*;
 import lombok.*;
-import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
 
@@ -15,7 +14,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 @Entity
-public class EstadoRequest {
+public class EstadoRequestMedico {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,8 +33,5 @@ public class EstadoRequest {
     @JoinColumn(name = "request_id", nullable = false)
     private Request request;
 
-    //usuario admin
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "admin_id", nullable = true)
-    private Admin admin;
+
 }

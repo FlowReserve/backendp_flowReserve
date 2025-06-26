@@ -4,14 +4,13 @@ import com.flowreserve.demo1.dto.EstadoRequest.EstadoRequestDTO;
 import com.flowreserve.demo1.dto.Request.RequestDTO;
 import com.flowreserve.demo1.dto.Request.RequestResponseDTO;
 import com.flowreserve.demo1.dto.Request.ResponseRequestEstadoUpdateDTO;
-import com.flowreserve.demo1.model.Estado.EstadoRequest;
+import com.flowreserve.demo1.model.Estado.EstadoRequestMedico;
 import com.flowreserve.demo1.model.Request.EstadoSolicitudEnum;
 import com.flowreserve.demo1.model.Request.Request;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
@@ -59,7 +58,7 @@ public class RequestMapper {
 
         String carpetaContenedora = (lastSlashIndex > 0) ? nombreArchivoZip.substring(0, lastSlashIndex + 1) : "";
 // "REQ-MC8ZTAJN_1234/"
-        String rutaPublica =publicBaseUrl + carpetaContenedora ;
+        String rutaPublica =publicBaseUrl + nombreArchivoZip ;
 
 
         return RequestResponseDTO.builder()
@@ -93,8 +92,8 @@ public class RequestMapper {
         EstadoSolicitudEnum estadoActual = null;
         if (request.getEstados() != null && !request.getEstados().isEmpty()) {
             estadoActual = request.getEstados().stream()
-                    .max(Comparator.comparing(EstadoRequest::getFechaCambio)) // ordenar por fecha
-                    .map(EstadoRequest::getState)
+                    .max(Comparator.comparing(EstadoRequestMedico::getFechaCambio)) // ordenar por fecha
+                    .map(EstadoRequestMedico::getState)
                     .orElse(null);
         }
         return ResponseRequestEstadoUpdateDTO.builder()

@@ -1,7 +1,7 @@
 package com.flowreserve.demo1.model.Request;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.flowreserve.demo1.model.Estado.EstadoRequest;
+import com.flowreserve.demo1.model.Estado.EstadoRequestMedico;
 import com.flowreserve.demo1.model.Medico.Medico;
 import com.flowreserve.demo1.model.Paciente.Paciente;
 import com.flowreserve.demo1.model.Response.Response;
@@ -9,9 +9,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -49,7 +47,7 @@ public class Request {
     private EstadoSolicitudEnum state;
 
     @OneToMany(mappedBy = "request", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<EstadoRequest> estados = new HashSet<>();
+    private Set<EstadoRequestMedico> estados = new HashSet<>();
 
     private int presionSistolica;
     private int presionDiastolica;

@@ -31,7 +31,7 @@ INSERT INTO roles_permissions_test (role_id, permission_id) VALUES
 -- CREA USUARIOS EN LA BASE DE DATOS
 INSERT INTO user (id, account_no_expired, account_no_locked, apellido, credential_no_expired, email, is_enabled, nombre, password) VALUES
 (1, TRUE, TRUE, "Rodriguez Otero",TRUE, 'admin@test.com', TRUE, "Alberto",'$2a$10$EaOIPn9whrM5QV/BiIL9Z.d./GcGalcpOE/WGOLSL.tUjuQ/ek9JG'), -- 12345
-(2, TRUE, TRUE, "Domingo Ramos", TRUE, 'user@test.com', TRUE, "Francisco", '$2a$10$EaOIPn9whrM5QV/BiIL9Z.d./GcGalcpOE/WGOLSL.tUjuQ/ek9JG'); -- 12345
+(2, TRUE, TRUE, "Domingo Ramos", TRUE, 'doctor@test.com', TRUE, "Francisco", '$2a$10$EaOIPn9whrM5QV/BiIL9Z.d./GcGalcpOE/WGOLSL.tUjuQ/ek9JG'); -- 12345
 
 -- ASIGNA ROLES A LOS USUARIOS
 INSERT INTO user_roles_test (user_id, role_id) VALUES
@@ -40,12 +40,9 @@ INSERT INTO user_roles_test (user_id, role_id) VALUES
 
 
 INSERT INTO hospital (id, codigo, nombre) VALUES 
-(1, 123456, "HOSPITAL CHUS SANTIAGO"),
-(2, 654321, "HOSPITAL PONTEVEDRA"),
-(3,  44234, 'Hospital Central'),
-(4, 4321, 'Hospital Norte'),
-(5, 5678, 'Hospital Sur'),
-(6, 8765, 'Hospital del Este');
+(1, "CHUS", "HOSPITAL CHUS SANTIAGO"),
+(2, "PTV", "HOSPITAL PONTEVEDRA");
+
 
 
 INSERT INTO medico (id, especialidad, hospital_id) VALUES 

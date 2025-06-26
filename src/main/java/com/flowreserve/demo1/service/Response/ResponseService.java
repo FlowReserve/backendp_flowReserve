@@ -1,6 +1,6 @@
 package com.flowreserve.demo1.service.Response;
 
-import com.flowreserve.demo1.model.Estado.EstadoRequest;
+import com.flowreserve.demo1.model.Estado.EstadoRequestMedico;
 import com.flowreserve.demo1.model.Medico.Medico;
 import com.flowreserve.demo1.model.Request.EstadoSolicitudEnum;
 import com.flowreserve.demo1.model.Request.Request;
@@ -83,7 +83,7 @@ public class ResponseService {
         respuesta.setFechaCreacion(LocalDateTime.now());
 
         responseRepository.save(respuesta);
-        EstadoRequest nuevoEstado = EstadoRequest.builder()
+        EstadoRequestMedico nuevoEstado = EstadoRequestMedico.builder()
                 .state(EstadoSolicitudEnum.COMPLETADA)
                 .comentarios("Respuesta guardada, estado completado")
                 .fechaCambio(LocalDateTime.now())
